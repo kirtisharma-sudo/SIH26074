@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Validation · Panchayat Weather Intelligence</title>
+<style>
+:root{--g:#183B36;--s:#F4EFE3;--t:#C8754D;--w:#FFFDF8;--m:#6f6e66;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);color-scheme:light}
+html{scroll-behavior:smooth}*{box-sizing:border-box}
+body{margin:0;background:var(--w);color:var(--g);font:14px/1.55 Inter,system-ui,-apple-system,"Segoe UI",sans-serif}
+.se{font-family:"Bookman Old Style",Bookman,Georgia,serif;font-weight:400;letter-spacing:-.025em}
+.mt{font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--m)}
+.hand{font-family:"Segoe Script","Bradley Hand","Snell Roundhand","Brush Script MT",cursive;font-style:italic;color:var(--t)}
+.wr{max-width:1240px;margin:0 auto;padding:0 28px}
+nav{display:flex;justify-content:space-between;align-items:center;padding:26px 0;border-bottom:1px solid #e6e0d0}
+nav b{font-size:19px}
+nav .links{display:flex;gap:30px;align-items:center;flex-wrap:wrap}
+nav a{color:var(--g);text-decoration:none;font-size:12.5px;letter-spacing:.06em;padding-bottom:3px;opacity:.6;transition:.3s}
+nav a.on,nav a:hover{opacity:1;border-bottom:1px solid var(--t)}
+header.top{padding:70px 0 0}
+h1{font-size:clamp(38px,6.6vw,86px);line-height:1.02;margin:8px 0 0;max-width:11.5em}
+.sub{max-width:480px;font-size:16px;color:#33423e;margin-top:18px}
+.ilb{display:inline-block;margin-top:20px;font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--m);border:1px solid #d9d2bf;padding:5px 10px;border-radius:99px}
+section{padding-top:90px}
+h2{font-size:clamp(26px,3.6vw,44px);line-height:1.05;margin:6px 0 0}
+/* three layers */
+.layers{margin-top:50px;border-top:1px solid var(--g)}
+.lyr{display:grid;grid-template-columns:200px 1fr;border-bottom:1px solid #d9d2bf;align-items:center}
+.lyr .lname{padding:22px 20px 22px 0;border-right:1px solid #d9d2bf}
+.lyr .lname b{display:block;font-size:19px;font-family:"Bookman Old Style",Georgia,serif}
+.lyr svg{display:block;width:100%;height:70px}
+.arrow{text-align:center;padding:4px 0;color:var(--t);font-size:13px}
+/* chart */
+.chartwrap{margin-top:56px}
+.chead{display:flex;justify-content:space-between;align-items:flex-end;flex-wrap:wrap;gap:14px}
+.legend{display:flex;gap:22px}
+.lg{display:flex;align-items:center;gap:8px;font-size:12px}
+.lg i{width:16px;height:2px;display:inline-block}
+#chart{width:100%;height:auto;margin-top:22px}
+.dot{cursor:pointer}
+.tip{position:absolute;background:var(--g);color:var(--s);padding:10px 14px;font-size:12px;border-radius:2px;pointer-events:none;opacity:0;transition:opacity .2s;transform:translate(-50%,-115%);white-space:nowrap}
+.tip b{font-family:"Bookman Old Style",Georgia,serif;font-size:15px}
+/* metrics */
+.metrics{display:grid;grid-template-columns:repeat(3,1fr);gap:0;margin-top:60px;border-top:1px solid var(--g);border-bottom:1px solid var(--g)}
+.mc{padding:26px 22px 26px 0;border-right:1px solid #d9d2bf}
+.mc:last-child{border-right:0}
+.mc .v{font-size:clamp(40px,5vw,64px);line-height:1}
+.mc .v small{font-size:16px;color:var(--m);font-family:Inter;margin-left:4px}
+.mc .dv{font-size:12px;color:var(--t);margin-top:6px}
+/* map section */
+.mapwrap{position:relative;background:#183B36;overflow:hidden;border-radius:2px;margin-top:26px}
+#vmap{display:block;width:100%;height:auto}
+.cell{stroke:#F4EFE3;stroke-opacity:.55;stroke-width:1;cursor:pointer;transition:fill .4s,stroke-width .3s}
+.cell:hover{stroke-width:2.2}
+.cell.sel{stroke:#C8754D;stroke-width:2.6}
+.pan{position:absolute;background:var(--s);padding:18px 22px 16px;width:250px;box-shadow:0 20px 50px -20px rgba(0,0,0,.6);transition:left .5s,top .5s,right .5s,opacity .4s;opacity:0;pointer-events:none}
+.pan.on{opacity:1}
+.pan .rd{display:grid;grid-template-columns:1fr 1fr;gap:4px 14px;margin-top:12px;font-size:14px}
+.pan .rd span{color:var(--m);font-size:10px;letter-spacing:.08em;text-transform:uppercase;display:block}
+.pan .err{margin-top:12px;border-top:1px solid #d9d2bf;padding-top:10px;font-size:12px;color:var(--t)}
+.lg2{position:absolute;right:16px;top:14px;color:var(--s);text-align:right;font-size:10px;letter-spacing:.14em;text-transform:uppercase}
+.lg2 i{display:block;width:120px;height:5px;margin-top:4px;margin-left:auto}
+/* loop */
+.loop{margin-top:110px;padding-bottom:100px}
+.ln{width:100%;height:auto;margin-top:40px}
+footer{padding:40px 0 40px;display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px;border-top:1px solid #e6e0d0}
+@media(max-width:860px){.lyr{grid-template-columns:1fr}.lyr .lname{border-right:0;border-bottom:1px solid #d9d2bf;padding:12px 0}.metrics{grid-template-columns:1fr}.mc{border-right:0;border-bottom:1px solid #d9d2bf}.pan{position:static;width:auto;opacity:1!important;box-shadow:none;margin-top:16px}}
+</style><link rel="stylesheet" href="assets/fx.css"></head><body>
+
+<nav class="wr"><b class="se">Panchayat Weather Intelligence</b>
+<div class="links"><a href="index.html">Home</a><a href="forecast-atlas.html">Forecast Atlas</a><a href="agro-advisory.html">Advisory</a><a class="on" href="validation.html">Validation</a><a href="data-model.html">Data &amp; Model</a><a href="about.html">About</a></div>
+</nav>
+
+<header class="top"><div class="wr">
+<span class="mt">Validation</span>
+<h1 class="se">Prediction is not enough. We validate it.</h1>
+<p class="sub">Comparing the original coarse forecast, our downscaled forecast and observed weather.</p>
+<span class="ilb">Prototype / illustrative data — not a validated performance claim</span>
+</div></header>
+
+<section><div class="wr">
+<span class="mt">The comparison</span>
+<h2 class="se">Three signals, one period.</h2>
+<div class="layers" id="layers"></div>
+
+<div class="chartwrap">
+<div class="chead"><span class="mt" id="cperiod">14-day validation window · Chandipur</span>
+<div class="legend"><span class="lg"><i style="background:#8f8b7d"></i>Observed</span><span class="lg"><i style="background:#C8754D"></i>Coarse forecast</span><span class="lg"><i style="background:#183B36"></i>Downscaled forecast</span></div></div>
+<div style="position:relative"><svg id="chart" viewBox="0 0 1000 340"></svg><div class="tip" id="tip"></div></div>
+</div>
+
+<div class="metrics" id="metrics"></div>
+</div></section>
+
+<section><div class="wr">
+<span class="mt">Where did the model help?</span>
+<h2 class="se">Explore improvement, Panchayat by Panchayat.</h2>
+<div class="mapwrap" id="mapwrap"><svg id="vmap" viewBox="0 0 900 500"></svg>
+<div class="lg2">MAE reduction<i style="background:linear-gradient(90deg,rgba(200,117,77,.08),#183B36)"></i></div>
+<div class="pan" id="pan"></div></div>
+</div></section>
+
+<section class="loop"><div class="wr">
+<span class="mt">Validation loop</span>
+<h2 class="se">A closed scientific loop, not a one-time score.</h2>
+<svg class="ln" id="loopsvg" viewBox="0 0 1200 220"></svg>
+<span class="ilb" style="margin-top:30px">Illustrative methodology for SIH26074 — figures on this page are simulated, not measured against live IMD/ground data.</span>
+</div></section>
+
+<footer class="wr"><span class="mt">Panchayat Weather Intelligence · SIH26074</span><span class="mt">Prototype / illustrative data</span></footer>
+
+<script>
+const $=s=>document.querySelector(s),NS="http://www.w3.org/2000/svg";
+const hs=s=>{let h=2166136261;for(let i=0;i<s.length;i++){h^=s.charCodeAt(i);h=Math.imul(h,16777619)}return()=>{h=Math.imul(h^h>>>15,2246822519);h^=h>>>13;return(h>>>0)/4294967296}};
+const mk=(t,a)=>{const e=document.createElementNS(NS,t);for(const k in a)e.setAttribute(k,a[k]);return e};
+// ---- series generation
+const N=14,q=hs("valid");
+const obs=[],coarse=[],down=[];
+for(let i=0;i<N;i++){const base=18+14*Math.sin(i/3)+ (q()-.5)*10+ (i>8?22*Math.exp(-((i-10)**2)/6):0);
+const o=Math.max(0,base+(q()-.5)*6);
+const c=Math.max(0,base*.55+6+(q()-.5)*14); // coarse smooths peaks, biased
+const d=Math.max(0,o*(0.82+q()*.3)+(q()-.5)*5); // downscaled tracks closer
+obs.push(o);coarse.push(c);down.push(d)}
+// ---- mini layer sparklines
+function spark(id,data,color){const w=1000,h=70,mx=Math.max(...obs,...coarse,...down,1);
+const pts=data.map((v,i)=>[i/(data.length-1)*w,h-6-(v/mx)*(h-14)]);
+const d="M"+pts.map(p=>p.map(n=>n.toFixed(1)).join(",")).join(" L");
+return `<svg viewBox="0 0 ${w} ${h}" preserveAspectRatio="none"><path d="${d}" fill="none" stroke="${color}" stroke-width="2.2"/></svg>`}
+$("#layers").innerHTML=`
+<div class="lyr"><div class="lname"><b class="se">Observed weather</b><span class="mt">Ground truth · rain gauge network</span></div>${spark(0,obs,"#8f8b7d")}</div>
+<div class="arrow">↓</div>
+<div class="lyr"><div class="lname"><b class="se">Coarse forecast</b><span class="mt">~12 km NWP output</span></div>${spark(1,coarse,"#C8754D")}</div>
+<div class="arrow">↓</div>
+<div class="lyr"><div class="lname"><b class="se">Downscaled forecast</b><span class="mt">1–3 km · Panchayat scale</span></div>${spark(2,down,"#183B36")}</div>`;
+// ---- main chart
+const W=1000,H=340,pad=36,mx=Math.max(...obs,...coarse,...down)*1.15;
+const X=i=>pad+i/(N-1)*(W-2*pad),Y=v=>H-pad-(v/mx)*(H-2*pad);
+function line(data){return "M"+data.map((v,i)=>X(i).toFixed(1)+","+Y(v).toFixed(1)).join(" L")}
+let gy="";for(let g=0;g<=4;g++){const y=pad+g*(H-2*pad)/4;gy+=`<line x1="${pad}" y1="${y}" x2="${W-pad}" y2="${y}" stroke="#e9e3d2" stroke-width="1"/><text x="${pad-8}" y="${y+4}" text-anchor="end" font-size="10" fill="#6f6e66" font-family="Inter">${Math.round(mx-g*mx/4)}</text>`}
+let gx="";for(let i=0;i<N;i+=2)gx+=`<text x="${X(i)}" y="${H-10}" text-anchor="middle" font-size="10" fill="#6f6e66" font-family="Inter">Day ${i+1}</text>`;
+function dots(data,color,key){return data.map((v,i)=>`<circle class="dot" cx="${X(i)}" cy="${Y(v)}" r="4" fill="${color}" data-i="${i}" data-k="${key}"/>`).join("")}
+$("#chart").innerHTML=`${gy}${gx}
+<path d="${line(coarse)}" fill="none" stroke="#C8754D" stroke-width="2" stroke-dasharray="5 4"/>
+<path d="${line(down)}" fill="none" stroke="#183B36" stroke-width="2.4"/>
+<path d="${line(obs)}" fill="none" stroke="#8f8b7d" stroke-width="2" stroke-dasharray="1 4" stroke-linecap="round"/>
+${dots(obs,"#8f8b7d","Observed")}${dots(coarse,"#C8754D","Coarse")}${dots(down,"#183B36","Downscaled")}`;
+const tip=$("#tip"),wrap=$(".chartwrap");
+$("#chart").addEventListener("mousemove",e=>{const t=e.target;if(t.classList.contains("dot")){const i=+t.dataset.i,k=t.dataset.k,v=k=="Observed"?obs[i]:k=="Coarse"?coarse[i]:down[i];
+tip.innerHTML=`<b>${v.toFixed(1)} mm</b><br>${k} · Day ${i+1}`;tip.style.opacity=1;const r=t.getBoundingClientRect(),cr=wrap.getBoundingClientRect();tip.style.left=(r.left-cr.left+r.width/2)+"px";tip.style.top=(r.top-cr.top)+"px"}else tip.style.opacity=0});
+$("#chart").addEventListener("mouseleave",()=>tip.style.opacity=0);
+// ---- metrics (secondary, computed from series)
+function err(a,b){return a.map((v,i)=>v-b[i])}
+const eC=err(coarse,obs),eD=err(down,obs);
+const mae=e=>e.reduce((a,v)=>a+Math.abs(v),0)/e.length;
+const rmse=e=>Math.sqrt(e.reduce((a,v)=>a+v*v,0)/e.length);
+const bias=e=>e.reduce((a,v)=>a+v,0)/e.length;
+const M=[["MAE",mae(eC),mae(eD),"mm"],["RMSE",rmse(eC),rmse(eD),"mm"],["Bias",bias(eC),bias(eD),"mm"]];
+$("#metrics").innerHTML=M.map(m=>`<div class="mc"><span class="mt">${m[0]} · downscaled vs coarse</span><div class="v se">${m[2].toFixed(1)}<small>${m[3]}</small></div><div class="dv">coarse: ${m[1].toFixed(1)} ${m[3]} · Δ ${(m[1]-m[2]>=0?"−":"+")}${Math.abs(m[1]-m[2]).toFixed(1)}</div></div>`).join("");
+// ---- panchayat improvement map (reuse boundary generator, simplified)
+const VW=900,VH=500,NC=7,NR=5,SD="#F4EFE3";
+const V=[];for(let r=0;r<=NR;r++){V[r]=[];for(let c=0;c<=NC;c++){const g=hs(r+"vv"+c);V[r][c]=[c*VW/NC+(g()-.5)*26,r*VH/NR+(g()-.5)*24]}}
+function edge(p,pp){const f=p[0]<pp[0]||p[0]==pp[0]&&p[1]<pp[1],a=f?p:pp,b=f?pp:p,r=hs(a+""+b),dx=b[0]-a[0],dy=b[1]-a[1],L=Math.hypot(dx,dy),o=[];for(let i=1;i<4;i++){const t=i/4,d=(r()-.5)*L*.22;o.push([a[0]+dx*t-dy/L*d,a[1]+dy*t+dx/L*d])}return f?o:o.reverse()}
+const vcells=[];const vq=hs("vimp");
+for(let r=0;r<NR;r++)for(let c=0;c<NC;c++){const p=[V[r][c],V[r][c+1],V[r+1][c+1],V[r+1][c]],pts=[p[0],...edge(p[0],p[1]),p[1],...edge(p[1],p[2]),p[2],...edge(p[2],p[3]),p[3],...edge(p[3],p[0])];
+const cx=p.reduce((a,z)=>a+z[0],0)/4,cy=p.reduce((a,z)=>a+z[1],0)/4,nz=vq();
+if(((cx-450)/390)**2+((cy-250)/220)**2>1+(nz-.5)*.3)continue;
+const improve=Math.max(-.1,.15+.55*Math.exp(-((cx-560)**2+(cy-320)**2)/40000)+.25*Math.exp(-((cx-260)**2+(cy-160)**2)/30000)+(vq()-.5)*.25);
+const o=15+vq()*40,co=o*(0.4+vq()*.4),dn=o*(1-improve*0.9)+(vq()-.5)*4;
+vcells.push({d:"M"+pts.map(z=>z[0].toFixed(1)+" "+z[1].toFixed(1)).join("L")+"Z",cx,cy,improve,obs:o,coarse:co,down:Math.max(1,dn),n:vcells.length+1})}
+const vmap=$("#vmap");
+vmap.innerHTML=`<rect width="${VW}" height="${VH}" fill="#183B36"/>`;
+const gv=mk("g",{});vmap.append(gv);
+const impCol=v=>{const t=Math.min(1,Math.max(0,(v+.1)/.7));const r1=200,g1c=117,b1=77,r2=24,g2=59,b2=54;return `rgb(${Math.round(r1+(r2-r1)*t)},${Math.round(g1c+(g2-g1c)*t)},${Math.round(b1+(b2-b1)*t)})`};
+vcells.forEach(c=>{const e=mk("path",{d:c.d,class:"cell",fill:impCol(c.improve)});e.onclick=()=>pickV(c,e);gv.append(e);c.el=e});
+$("#pan").innerHTML=`<div class="mt" id="vpt">Select a Panchayat</div><div style="font-size:26px;font-family:'Bookman Old Style',Georgia,serif;margin-top:4px" id="vname">—</div><div class="rd">
+<div><span>Observed</span><span id="v1">—</span></div><div><span>Coarse forecast</span><span id="v2">—</span></div>
+<div><span>Downscaled forecast</span><span id="v3">—</span></div><div><span>Validation period</span><span id="v4">14 days</span></div></div>
+<div class="err" id="v5"></div>`;
+function pickV(c,el){vcells.forEach(k=>k.el.classList.toggle("sel",k===c));
+$("#vpt").textContent="Panchayat "+String(c.n).padStart(2,"0");$("#vname").textContent="Panchayat "+String(c.n).padStart(2,"0");
+$("#v1").textContent=c.obs.toFixed(1)+" mm";$("#v2").textContent=c.coarse.toFixed(1)+" mm";$("#v3").textContent=c.down.toFixed(1)+" mm";
+const eC2=Math.abs(c.coarse-c.obs),eD2=Math.abs(c.down-c.obs);
+$("#v5").textContent="Error — coarse: "+eC2.toFixed(1)+" mm · downscaled: "+eD2.toFixed(1)+" mm";
+const p=$("#pan");p.classList.add("on");const x=c.cx/VW*100,y=Math.max(3,Math.min(48,c.cy/VH*100-16));
+p.style.top=y+"%";if(x>52){p.style.left="auto";p.style.right=(103-x)+"%"}else{p.style.right="auto";p.style.left=(x+4)+"%"}}
+pickV(vcells[Math.floor(vcells.length/2)]);
+// ---- loop diagram
+const steps=["Forecast","Prediction","Ground observation","Error","Model refinement"];
+const svg=$("#loopsvg");let g="";
+steps.forEach((t,i)=>{const x=100+i*260;g+=`<circle cx="${x}" cy="90" r="7" fill="#FFFDF8" stroke="#C8754D" stroke-width="2"/><text x="${x}" y="130" text-anchor="middle" font-family="Bookman Old Style,Georgia,serif" font-size="20" fill="#183B36">${t}</text>`;
+if(i<steps.length-1)g+=`<path d="M${x+40} 90H${x+220}" stroke="#C8754D" stroke-width="1.5" marker-end="url(#ah)"/>`});
+g+=`<path d="M1080 90C1140 90 1140 190 1100 190C500 210 200 210 100 130" fill="none" stroke="#183B36" stroke-width="1.3" stroke-dasharray="4 5" marker-end="url(#ah2)"/><text x="600" y="205" text-anchor="middle" font-family="Inter" font-size="10" letter-spacing="2" fill="#6f6e66">FEEDS BACK INTO THE NEXT FORECAST</text>`;
+svg.innerHTML=`<defs><marker id="ah" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0 0L6 3L0 6Z" fill="#C8754D"/></marker><marker id="ah2" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0 0L6 3L0 6Z" fill="#183B36"/></marker></defs>${g}`;
+</script><script src="assets/fx.js"></script></body></html>

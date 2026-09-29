@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Alerts · Panchayat Weather Intelligence</title>
+<link rel="stylesheet" href="assets/fx.css">
+<style>
+:root{--g:#183B36;--s:#F4EFE3;--t:#C8754D;--w:#FFFDF8;--m:#6f6e66;box-sizing:border-box;color-scheme:light}
+html{scroll-behavior:smooth}*{box-sizing:border-box}
+body{margin:0;background:var(--w);color:var(--g);font:14px/1.55 Inter,system-ui,-apple-system,"Segoe UI",sans-serif}
+.se{font-family:"Bookman Old Style",Bookman,Georgia,serif;font-weight:400;letter-spacing:-.025em}
+.mt{font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--m)}
+.wr{max-width:1240px;margin:0 auto;padding:0 28px}
+.open{padding:90px 0 40px;text-align:center}.open h1{font-size:clamp(30px,4.8vw,58px);line-height:1.2;max-width:15em;margin:10px auto 0}
+.open p{max-width:36em;margin:18px auto 0;color:var(--m);font-size:15px}
+section{padding-top:70px}h2{font-size:clamp(24px,3.2vw,38px);line-height:1.1;margin:6px 0 18px}
+.row{display:flex;flex-wrap:wrap;gap:12px;align-items:end;margin:8px 0 22px}
+label{display:flex;flex-direction:column;gap:5px;font-size:11px;color:var(--m)}
+select,input{font:inherit;font-size:14px;padding:10px 12px;border:1px solid #d9d2bf;border-radius:6px;background:#fff;color:var(--g);transition:.25s}
+select:hover,input:hover,select:focus,input:focus{border-color:var(--t);box-shadow:0 0 16px rgba(200,117,77,.35);outline:none}
+.fxbtn{background:var(--g);color:var(--s);border:0;border-radius:6px;padding:11px 20px;font:inherit;cursor:pointer}
+.g3{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:18px}
+.big{font-size:clamp(30px,4vw,46px);line-height:1}.dk{background:var(--g);color:var(--s);border-radius:6px}
+.lv{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}.lv div{padding:14px;text-align:center;border-radius:8px;color:#fff;transition:.4s;opacity:.35;font-size:12px}
+.lv div.on{opacity:1;transform:scale(1.1);box-shadow:0 0 34px currentColor}.lv b{display:block;font-size:20px}
+.ch{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:18px;margin-top:8px}
+.bub{background:var(--s);border-radius:14px;padding:14px;font-size:13.5px;min-height:110px;margin-top:10px;white-space:pre-line;animation:pop .5s}@keyframes pop{from{transform:scale(.9);opacity:0}}
+.lad{display:grid;grid-template-columns:repeat(4,1fr);position:relative;margin-top:24px}.lad::before{content:"";position:absolute;left:0;top:13px;height:3px;width:0;background:var(--t);box-shadow:0 0 14px var(--t);animation:ld 3s .5s forwards}@keyframes ld{to{width:100%}}
+.lad div{padding-top:34px;position:relative}.lad div::before{content:"";position:absolute;left:0;top:6px;width:16px;height:16px;border-radius:50%;background:var(--t);box-shadow:0 0 16px var(--t)}
+.rt{width:100%;border-collapse:collapse}.rt td,.rt th{padding:12px 10px;border-bottom:1px solid #e6e0d0;text-align:left;font-size:13px;transition:.25s}.rt tr:hover td{background:var(--s)}
+</style></head><body>
+<header class="open wr"><span class="mt">Alert desk</span><h1 class="se">A warning is only useful <em>if it reaches the field.</em></h1><p>Choose a hazard, a Panchayat and a lead time. See the colour-coded warning and the exact message a farmer receives, in three languages, on four channels.</p></header>
+<section><div class="wr"><div class="row">
+<label>Hazard<select id="hz"><option value="rain">Heavy rain</option><option value="heat">Heatwave</option><option value="cold">Cold wave / frost</option><option value="storm">Thunderstorm and lightning</option></select></label>
+<label>Panchayat<select id="pn"><option>Chandipur</option><option>Rampur</option><option>Devgarh</option><option>Sitapur</option><option>Kishanpur</option><option>Baldev Nagar</option></select></label>
+<label>Lead time: <span id="lt">24</span> h<input type="range" id="ld" min="6" max="72" step="6" value="24"></label>
+<label>Language<select id="lg"><option value="en">English</option><option value="hi">हिन्दी</option><option value="mr">मराठी</option></select></label></div>
+<div class="lv" id="lv"></div>
+<div class="ch"><div class="fxc"><span class="mt">SMS</span><div class="bub" id="b1"></div></div><div class="fxc"><span class="mt">WhatsApp</span><div class="bub" id="b2"></div></div><div class="fxc"><span class="mt">Voice call (IVR)</span><div class="bub" id="b3"></div></div><div class="fxc"><span class="mt">Village loudspeaker text</span><div class="bub" id="b4"></div></div></div></div></section>
+<section><div class="wr"><h2 class="se">How a warning escalates</h2>
+<div class="lad"><div><b class="se">72 h · Watch</b><br><span style="color:var(--m)">Signal seen in the coarse forecast. Advisory officers are informed.</span></div><div><b class="se">48 h · Alert</b><br><span style="color:var(--m)">Downscaled forecast pins the risk to specific Panchayats.</span></div><div><b class="se">24 h · Warning</b><br><span style="color:var(--m)">Messages go out in local languages with crop-specific actions.</span></div><div><b class="se">6 h · Act now</b><br><span style="color:var(--m)">Voice calls and loudspeaker text reach households without smartphones.</span></div></div></div></section>
+<section><div class="wr"><h2 class="se">What triggers each hazard</h2><table class="rt"><tr><th>Hazard</th><th>Trigger used in this prototype</th><th>Typical field action</th></tr>
+<tr><td>Heavy rain</td><td>64.5 mm or more in 24 h</td><td>Drain fields, delay spraying, cover harvested produce</td></tr>
+<tr><td>Heatwave</td><td>Tmax at least 40 °C and 4.5 °C above normal (plains)</td><td>Irrigate at dusk, mulch, protect livestock</td></tr>
+<tr><td>Cold wave</td><td>Tmin at most 10 °C and 4.5 °C below normal (plains)</td><td>Light evening irrigation, cover nurseries</td></tr>
+<tr><td>Thunderstorm</td><td>Lightning probability above 60% in the next 6 h</td><td>Leave open fields, stay away from trees</td></tr></table></div></section>
+<div style="height:90px"></div>
+<script>
+const $=s=>document.querySelector(s);
+const T={rain:{c:["#4c8bc9","#e0b04a","#e2853f","#c9433a"],n:{en:"Heavy rain",hi:"भारी बारिश",mr:"अतिवृष्टी"},a:{en:"Cover harvested crop, open drains and do not spray.",hi:"कटी फसल ढकें, नालियां खोलें और छिड़काव न करें।",mr:"कापलेले पीक झाका, चर खुले करा आणि फवारणी टाळा."},w:{en:"heavy rain",hi:"तेज़ बारिश",mr:"जोरदार पाऊस"}},
+heat:{n:{en:"Heatwave",hi:"लू",mr:"उष्णतेची लाट"},a:{en:"Irrigate at dusk, mulch the soil and keep animals in shade.",hi:"शाम को सिंचाई करें, मल्चिंग करें और पशुओं को छाया में रखें।",mr:"संध्याकाळी सिंचन करा, आच्छादन करा आणि जनावरे सावलीत ठेवा."},w:{en:"very high heat",hi:"भीषण गर्मी",mr:"तीव्र उष्णता"}},
+cold:{n:{en:"Cold wave",hi:"शीत लहर",mr:"थंडीची लाट"},a:{en:"Cover nurseries and give a light evening irrigation.",hi:"नर्सरी ढकें और शाम को हल्की सिंचाई करें।",mr:"रोपवाटिका झाका आणि संध्याकाळी हलके पाणी द्या."},w:{en:"frost",hi:"पाला",mr:"दंव"}},
+storm:{n:{en:"Thunderstorm",hi:"आंधी-तूफ़ान",mr:"वादळी पाऊस"},a:{en:"Leave open fields and stay away from tall trees.",hi:"खुले खेत छोड़ दें और ऊंचे पेड़ों से दूर रहें।",mr:"उघडी शेते सोडा आणि उंच झाडांपासून दूर रहा."},w:{en:"lightning",hi:"बिजली",mr:"विजा"}}};
+const L=["Green","Yellow","Orange","Red"],LC=["#5aa877","#d9a92f","#e2853f","#c9433a"],ln={en:"Next {h} hours",hi:"अगले {h} घंटे",mr:"पुढील {h} तास"},nm={en:"Warning",hi:"चेतावनी",mr:"इशारा"};
+function up(){const h=$("#hz").value,p=$("#pn").value,H=+$("#ld").value,g=$("#lg").value,t=T[h];$("#lt").textContent=H;
+const sev=H<=12?3:H<=24?2:H<=48?1:0;
+$("#lv").innerHTML=L.map((l,i)=>`<div class="${i==sev?"on":""}" style="background:${LC[i]};color:${LC[i]}"><b class="se" style="color:#fff">${l}</b><span style="color:#fff">${["Be aware","Be prepared","Take action","Act now"][i]}</span></div>`).join("");
+const core=`${t.n[g]} ${nm[g]}: ${p}, ${ln[g].replace("{h}",H)}. ${t.a[g]}`;
+$("#b1").textContent=core.slice(0,160);$("#b2").textContent="⚠ "+core+"\n\n"+["Reply 1 for details","1 दबाएं, अधिक जानकारी के लिए","अधिक माहितीसाठी 1 पाठवा"][["en","hi","mr"].indexOf(g)];
+$("#b3").textContent="🔊 "+core+"\n(repeats twice, press 9 to replay)";$("#b4").textContent="📢 "+p+": "+t.w[g]+" · "+ln[g].replace("{h}",H)+" · "+t.a[g]}
+["hz","pn","ld","lg"].forEach(x=>$("#"+x).oninput=up);up();
+</script>
+<script src="assets/fx.js"></script>
+</body></html>

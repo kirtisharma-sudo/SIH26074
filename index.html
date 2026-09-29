@@ -1,0 +1,492 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Panchayat Weather Intelligence · SIH26074</title>
+<style>
+:root{--g:#183B36;--s:#F4EFE3;--t:#C8754D;--w:#FFFDF8;--m:#6B6A63;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);color-scheme:light}
+html{scroll-behavior:smooth;scroll-padding-top:70px}*{box-sizing:border-box}
+body{margin:0;background:var(--w);color:var(--g);font:14px/1.55 Inter,system-ui,-apple-system,"Segoe UI",sans-serif;overflow-x:hidden}
+.se{font-family:"Bookman Old Style",Bookman,Georgia,serif;font-weight:400;letter-spacing:-.02em}
+.mt{font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--m)}
+.hand{font-family:"Segoe Script","Bradley Hand","Snell Roundhand",cursive;font-style:italic;color:var(--t)}
+.wr{max-width:1280px;margin:0 auto;padding:0 30px}
+a{color:inherit}
+section{padding-top:130px}
+h2{font-size:clamp(28px,4vw,50px);line-height:1.04;margin:8px 0 0}
+.ilb{display:inline-block;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--m);border:1px solid #d9d2bf;padding:5px 10px;border-radius:99px}
+/* ---- nav ---- */
+#nav{position:sticky;top:0;z-index:50;background:rgba(255,253,248,0);border-bottom:1px solid rgba(24,59,54,0);transition:background .35s,border-color .35s,box-shadow .35s}
+#nav.scrolled{background:rgba(255,253,248,.92);backdrop-filter:blur(6px);border-bottom-color:#e6e0d0;box-shadow:0 8px 24px -20px rgba(0,0,0,.3)}
+#nav .in{display:flex;justify-content:space-between;align-items:center;padding:20px 0}
+#nav b{font-size:17px}
+#nav .links{display:flex;gap:30px;align-items:center}
+#nav a.lnk{font-size:12px;letter-spacing:.1em;text-transform:uppercase;text-decoration:none;opacity:.62;border-bottom:1px solid transparent;padding-bottom:3px;transition:.25s}
+#nav a.lnk:hover{opacity:1;border-color:var(--t)}
+#nav .cta{border:1px solid var(--g);padding:9px 18px;font-size:11.5px;letter-spacing:.1em;text-transform:uppercase;text-decoration:none;white-space:nowrap;transition:.25s}
+#nav .cta:hover{background:var(--g);color:var(--s)}
+#hbtn{display:none;border:0;background:none;cursor:pointer;flex-direction:column;gap:5px;padding:6px}
+#hbtn span{width:22px;height:1.5px;background:var(--g)}
+#mnav{display:none;position:fixed;inset:0;background:var(--g);z-index:60;flex-direction:column;padding:26px 30px;color:var(--s)}
+#mnav.on{display:flex}
+#mnav a{color:var(--s);text-decoration:none;font-size:26px;padding:14px 0;border-bottom:1px solid rgba(244,239,227,.15);font-family:"Bookman Old Style",Georgia,serif}
+#mnav .x{align-self:flex-end;background:none;border:0;color:var(--s);font-size:26px;cursor:pointer}
+/* ---- hero ---- */
+.hero{padding-top:64px;background:linear-gradient(#FBF7EC,var(--s) 70%);position:relative;overflow:hidden}
+.hgrid{display:grid;grid-template-columns:1.05fr .95fr;gap:60px;align-items:center;padding:64px 0 80px;position:relative;z-index:1}
+.eyebrow{font-size:11px;letter-spacing:.16em;color:var(--t);text-transform:uppercase;line-height:1.9}
+h1.hh{font-size:clamp(38px,5.6vw,70px);line-height:1.02;margin:16px 0 0;text-transform:uppercase}
+h1.hh em{color:var(--t);font-style:normal}
+.hero p.lead{max-width:480px;font-size:16px;color:#33423e;margin-top:24px}
+.hbtns{display:flex;flex-wrap:wrap;gap:14px;margin-top:34px}
+.bpri{background:var(--g);color:var(--s);border:1px solid var(--g);padding:15px 26px;font:inherit;font-size:12.5px;letter-spacing:.06em;text-decoration:none;cursor:pointer;transition:.25s}
+.bpri:hover{background:#0f2723}
+.bsec{border:1px solid var(--g);color:var(--g);padding:15px 26px;font:inherit;font-size:12.5px;letter-spacing:.06em;text-decoration:none;background:none;cursor:pointer;transition:.25s}
+.bsec:hover{background:var(--g);color:var(--s)}
+/* hero panel */
+.panelbox{background:var(--g);border-radius:2px;overflow:hidden;box-shadow:0 40px 80px -40px rgba(15,39,35,.55)}
+.pbhead{display:flex;justify-content:space-between;align-items:center;padding:18px 22px;border-bottom:1px solid rgba(244,239,227,.15)}
+.pbhead b{color:var(--s);font-size:12px;letter-spacing:.1em;text-transform:uppercase;font-weight:500}
+.livedot{width:6px;height:6px;border-radius:50%;background:var(--t);display:inline-block;margin-right:7px;animation:lp 2.4s ease-in-out infinite}
+@keyframes lp{50%{opacity:.3}}
+.pbmap{position:relative}
+#heroMap{display:block;width:100%;height:auto}
+.pbres{position:absolute;left:14px;top:12px;color:var(--s);font-size:10px;letter-spacing:.1em;background:rgba(24,59,54,.55);padding:5px 9px}
+.pbstats{display:grid;grid-template-columns:repeat(4,1fr);border-top:1px solid rgba(244,239,227,.15)}
+.pbstats div{padding:16px 14px;border-right:1px solid rgba(244,239,227,.15);color:var(--s)}
+.pbstats div:last-child{border-right:0}
+.pbstats .k{font-size:9.5px;letter-spacing:.08em;text-transform:uppercase;color:#a9c1ba}
+.pbstats .v{font-size:22px;font-family:"Bookman Old Style",Georgia,serif;margin-top:4px}
+.pbrisk{padding:12px 22px 18px;color:var(--t);font-size:11px;letter-spacing:.1em;text-transform:uppercase;border-top:1px solid rgba(244,239,227,.15)}
+/* ---- controls (shared) ---- */
+.ctl{display:flex;flex-wrap:wrap;gap:34px;align-items:flex-end;margin-top:36px;border-top:1px solid var(--g);border-bottom:1px solid var(--g);padding:16px 0}
+.tg{display:flex}
+.tg button{border:0;background:none;color:var(--g);padding:6px 24px 6px 0;cursor:pointer;font:inherit;opacity:.4;transition:.4s;display:flex;flex-direction:column;gap:2px}
+.tg button.on{opacity:1}
+.tg .n{font-size:20px;font-family:"Bookman Old Style",Georgia,serif}
+.tg button.on .n{color:var(--t)}
+.mseg{display:flex;margin-left:auto}
+.mseg button{border:1px solid var(--g);border-left:0;background:none;color:var(--g);font:inherit;font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;padding:9px 15px;cursor:pointer;opacity:.55;transition:.3s}
+.mseg button:first-child{border-left:1px solid var(--g)}
+.mseg button.on{background:var(--g);color:var(--s);opacity:1}
+/* ---- main map ---- */
+.mb{position:relative;background:#183B36;overflow:hidden;border-radius:2px;margin-top:26px}
+#map{display:block;width:100%;height:auto}
+#cv{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}
+.cell{stroke:#F4EFE3;stroke-opacity:0;stroke-width:1.1;cursor:pointer;transition:fill .3s,stroke-opacity .3s,transform .6s;transform-box:fill-box;transform-origin:center}
+.fine .cell{stroke-opacity:.8}
+.fine .cell:hover{stroke-width:2.2;stroke-opacity:1}
+.slow .cell{transition:fill 1.9s ease,stroke-opacity 1.5s ease .6s,transform .6s}
+.cell.sel{stroke:#F4EFE3;stroke-width:3;stroke-opacity:1;transform:scale(1.045);animation:pu 2.6s ease-in-out infinite}
+@keyframes pu{50%{stroke-opacity:.35}}
+#gB rect{transition:opacity 1.4s}
+.shd{animation:shd 60s ease-in-out infinite alternate}@keyframes shd{from{transform:translate(-260px,0)}to{transform:translate(360px,60px)}}
+.pan{position:absolute;background:var(--s);padding:18px 22px 16px;width:250px;box-shadow:0 20px 50px -20px rgba(0,0,0,.6);transition:left .6s,top .6s,right .6s,opacity .5s;opacity:0;pointer-events:none}
+.pan.on{opacity:1}
+.pan .big{font-size:64px;line-height:.95;margin:4px 0 2px}.pan .big small{font-size:16px;letter-spacing:0;margin-left:4px;color:var(--m);font-family:Inter}
+.pan .rd{display:grid;grid-template-columns:1fr 1fr;gap:2px 14px;margin-top:12px;font-size:13px}
+.pan .rd span{color:var(--m);font-size:10px;letter-spacing:.08em;text-transform:uppercase;display:block}
+.pan .rk{margin-top:12px;color:var(--t);font-size:11px;letter-spacing:.14em;border-top:1px solid #d9d2bf;padding-top:10px}
+.pan .hand{font-size:13px;margin-top:6px;line-height:1.3}
+#ha{position:absolute;left:22px;bottom:18px;font-size:clamp(12px,1.5vw,16px);color:var(--s);max-width:280px;transition:opacity .6s}
+.lg{position:absolute;right:16px;top:14px;color:var(--s);text-align:right}
+.lg i{display:block;width:120px;height:5px;margin-top:4px;background:linear-gradient(90deg,rgba(200,117,77,.08),#C8754D);margin-left:auto}
+/* scrubber */
+.sc{margin-top:22px;display:flex;gap:22px;align-items:center}
+.sc button{border:1px solid var(--g);background:none;color:var(--g);font:inherit;font-size:10px;letter-spacing:.16em;padding:10px 16px;cursor:pointer;border-radius:99px;text-transform:uppercase}
+.sc .rw{flex:1}
+input[type=range]{-webkit-appearance:none;appearance:none;width:100%;background:none;height:26px;margin:0}
+input[type=range]::-webkit-slider-runnable-track{height:1px;background:var(--g)}
+input[type=range]::-moz-range-track{height:1px;background:var(--g)}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;height:18px;border-radius:50%;background:var(--t);margin-top:-9px;border:3px solid var(--w);box-shadow:0 0 0 1px var(--t)}
+input[type=range]::-moz-range-thumb{width:12px;height:12px;border-radius:50%;background:var(--t);border:3px solid var(--w)}
+.tk{display:flex;justify-content:space-between}
+.hh{font-size:34px;min-width:100px;text-align:right}
+.mini{display:flex;gap:2px;margin-top:14px;align-items:flex-end;height:46px}
+.mini i{flex:1;background:var(--t);opacity:.75;transition:height .4s}
+/* ---- why downscaling story ---- */
+.story{display:grid;grid-template-columns:1fr auto 1fr auto 1fr;gap:18px;align-items:center;margin-top:56px}
+.stcol{text-align:center}
+.stcol .lbl{font-size:12px;letter-spacing:.1em;text-transform:uppercase}
+.stbox{border:1px solid var(--g);padding:22px 16px;margin-top:14px;min-height:150px;display:flex;flex-direction:column;justify-content:center;gap:8px}
+.stbox.mid{background:var(--g);color:var(--s);border-color:var(--g)}
+.stbox span{font-size:12.5px}
+.stbox.mid span{color:#cfe0da}
+.starrow{font-size:22px;color:var(--t)}
+/* ---- why this forecast (sources) ---- */
+.srcgrid{display:grid;grid-template-columns:repeat(5,1fr);gap:0;margin-top:44px;border-top:1px solid var(--g);border-bottom:1px solid var(--g)}
+.srcc{padding:22px 18px 22px 0;border-right:1px solid #d9d2bf;cursor:pointer;position:relative}
+.srcc:last-child{border-right:0}
+.srcc h4{font-size:16px;margin:0 0 4px;font-family:"Bookman Old Style",Georgia,serif}
+.srcc .mt{margin-bottom:0}
+.srcpop{max-height:0;overflow:hidden;transition:max-height .4s ease;font-size:12px;color:var(--m);margin-top:0}
+.srcc.on .srcpop{max-height:160px;margin-top:10px}
+.fusionflow{display:flex;justify-content:center;gap:26px;align-items:center;margin-top:36px;flex-wrap:wrap;text-align:center}
+.fusionflow .fb{border:1px solid var(--g);padding:14px 22px;font-family:"Bookman Old Style",Georgia,serif;font-size:15px}
+.fusionflow .fb.mid{background:var(--g);color:var(--s)}
+.fusionflow .fa{color:var(--t)}
+.contrib{margin-top:30px}
+.cb{display:flex;align-items:center;gap:12px;margin:9px 0;font-size:13px}
+.cb span:first-child{width:150px}.cb .tr{flex:1;height:4px;background:#ebe5d5}
+.cb .fl{height:4px;background:var(--g);width:0;transition:width 1s}
+/* ---- validation ---- */
+#chart{width:100%;height:auto;margin-top:22px}
+.legend{display:flex;gap:20px;flex-wrap:wrap}
+.lg2{display:flex;align-items:center;gap:8px;font-size:12px}
+.lg2 i{width:16px;height:2px;display:inline-block}
+.metrics{display:grid;grid-template-columns:repeat(3,1fr);gap:0;margin-top:40px;border-top:1px solid var(--g);border-bottom:1px solid var(--g)}
+.mc{padding:22px 20px 22px 0;border-right:1px solid #d9d2bf}
+.mc:last-child{border-right:0}
+.mc .v{font-size:clamp(34px,4vw,50px);line-height:1}
+.mc .v small{font-size:14px;color:var(--m);font-family:Inter;margin-left:4px}
+/* ---- advisory ---- */
+.advflow{display:flex;align-items:center;gap:20px;flex-wrap:wrap;margin-top:36px}
+.advflow .ab{font-family:"Bookman Old Style",Georgia,serif;font-size:clamp(18px,2.2vw,26px)}
+.advflow .ar{color:var(--t)}
+.grid4{display:grid;grid-template-columns:repeat(4,1fr);gap:0;margin-top:44px;border-top:1px solid var(--g)}
+.gc{padding:24px 20px 24px 0;border-right:1px solid #d9d2bf;min-height:190px;display:flex;flex-direction:column;justify-content:space-between}
+.gc:last-child{border-right:0}
+.gc h3{font-size:20px;margin:0}
+.gc p{font-size:12.5px;color:var(--m);margin:8px 0 0}
+.stat{margin-top:14px;font-size:11px;letter-spacing:.12em;text-transform:uppercase;display:flex;align-items:center;gap:8px}
+.stat i{width:7px;height:7px;border-radius:50%;display:inline-block;font-style:normal}
+.st-WAIT i{background:#8a3a1f}.st-WAIT{color:#8a3a1f}
+.st-PLAN i{background:var(--t)}.st-PLAN{color:var(--t)}
+.st-PROCEED i{background:#3f6045}.st-PROCEED{color:#3f6045}
+.st-MONITOR i{background:#8a8f5f}.st-MONITOR{color:#8a8f5f}
+.whyln{background:none;border:0;color:var(--t);font:inherit;font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;cursor:pointer;padding:0;text-align:left;margin-top:10px}
+.whyd{max-height:0;overflow:hidden;transition:max-height .4s ease;font-size:11.5px;color:var(--m)}
+.whyd.on{max-height:120px;margin-top:8px}
+/* ---- explore ---- */
+.expwrap{display:grid;grid-template-columns:.6fr 1.4fr;gap:50px;margin-top:40px;align-items:start}
+select#expsel{font:inherit;font-size:20px;font-family:"Bookman Old Style",Georgia,serif;background:none;border:0;border-bottom:1px solid var(--g);padding:8px 0;color:var(--g);width:100%}
+.expgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:0;margin-top:24px;border-top:1px solid #d9d2bf}
+.egc{padding:16px 16px 16px 0;border-right:1px solid #d9d2bf}
+.egc:last-child{border-right:0}
+.egc .v{font-size:30px;font-family:"Bookman Old Style",Georgia,serif}
+.explist{display:grid;grid-template-columns:1fr 1fr;gap:0;border-top:1px solid var(--g)}
+.eli{padding:16px 18px 16px 0;border-right:1px solid #d9d2bf;border-bottom:1px solid #d9d2bf;font-size:13px;display:flex;justify-content:space-between}
+.eli:nth-child(2n){border-right:0;padding-left:18px}
+/* ---- journey ---- */
+.jn{width:100%;height:auto;margin-top:40px}
+.jn .ln{stroke-dasharray:1;stroke-dashoffset:1;transition:stroke-dashoffset 3s ease}
+.jn.in .ln{stroke-dashoffset:0}
+.jn .nd{opacity:0;transition:opacity 1s}.jn.in .nd{opacity:1}
+/* ---- data & science ---- */
+.dsflow{display:flex;flex-wrap:wrap;justify-content:center;align-items:center;gap:14px;margin-top:44px}
+.dsflow .db{border:1px solid var(--g);padding:12px 18px;font-size:13px;font-family:"Bookman Old Style",Georgia,serif}
+.dsflow .db.acc{background:var(--g);color:var(--s)}
+.dsflow .da{color:var(--t);font-size:15px}
+.dsnote{margin-top:22px;font-size:12.5px;color:var(--m);max-width:640px}
+/* ---- footer ---- */
+footer{background:var(--g);color:var(--s);margin-top:130px;padding:60px 0 30px}
+footer .fmain{display:flex;justify-content:space-between;flex-wrap:wrap;gap:30px;padding-bottom:30px;border-bottom:1px solid rgba(244,239,227,.15)}
+footer b{font-size:18px}
+footer .hand2{color:#e6b493;font-style:italic;font-family:"Segoe Script","Bradley Hand",cursive;font-size:18px;margin-top:10px;display:block}
+footer .bottom{display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px;padding-top:20px;font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:#9db1ab}
+@media(max-width:960px){#nav .links{display:none}#hbtn{display:flex}.hgrid{grid-template-columns:1fr;gap:40px;padding:40px 0 56px}.story{grid-template-columns:1fr}.starrow{transform:rotate(90deg)}.srcgrid{grid-template-columns:1fr 1fr}.srcc:nth-child(2n){border-right:0}.metrics{grid-template-columns:1fr}.mc{border-right:0;border-bottom:1px solid #d9d2bf}.grid4{grid-template-columns:1fr 1fr}.gc:nth-child(2n){border-right:0}.expwrap{grid-template-columns:1fr}.pbstats{grid-template-columns:1fr 1fr}}
+@media(prefers-reduced-motion:reduce){*{animation:none!important}}
+</style><link rel="stylesheet" href="assets/fx.css"></head><body>
+
+<div id="nav"><div class="wr in">
+<b class="se">Panchayat Weather Intelligence</b>
+<div class="links">
+<a class="lnk" href="#home">Home</a><a class="lnk" href="forecast-atlas.html">Forecast Atlas</a><a class="lnk" href="agro-advisory.html">Advisory</a><a class="lnk" href="farm-planner.html">Farm Planner</a><a class="lnk" href="alerts.html">Alerts</a><a class="lnk" href="validation.html">Validation</a><a class="lnk" href="data-model.html">Data &amp; Model</a><a class="lnk" href="impact.html">Impact</a><a class="lnk" href="about.html">About</a>
+</div>
+<a class="cta" href="#explore">Explore Panchayat →</a>
+<button id="hbtn" aria-label="Menu"><span></span><span></span><span></span></button>
+</div></div>
+<div id="mnav"><button class="x" id="mx">×</button>
+<a href="#home">Home</a><a href="forecast-atlas.html">Forecast Atlas</a><a href="agro-advisory.html">Advisory</a><a href="farm-planner.html">Farm Planner</a><a href="alerts.html">Alerts</a><a href="validation.html">Validation</a><a href="data-model.html">Data &amp; Model</a><a href="impact.html">Impact</a><a href="about.html">About</a><a href="#explore">Explore Panchayat →</a>
+</div>
+
+<header class="hero" id="home"><div class="wr">
+<div class="hgrid">
+<div>
+<div class="eyebrow">Smart India Hackathon 2026<br>SIH26074 · Agriculture, FoodTech &amp; Rural Development</div>
+<h1 class="hh se">Weather knows<br>the region.<br>We make it know<br>the <em>Panchayat.</em></h1>
+<p class="lead">AI-powered hyper-local weather intelligence that transforms coarse block-level forecasts into Panchayat-level insights for agricultural decision making.</p>
+<div class="hbtns"><a class="bpri" href="#forecast">Explore Panchayat Forecast</a><a class="bsec" href="#story">See How It Works ↓</a></div>
+</div>
+<div class="panelbox">
+<div class="pbhead"><b><span class="livedot"></span>Weather Intelligence Panel</b><span class="mt" style="color:#a9c1ba">Simulated</span></div>
+<div class="pbmap"><svg id="heroMap" viewBox="0 0 520 340"></svg><div class="pbres" id="pbres">12 km → 1–3 km</div></div>
+<div class="pbstats">
+<div><div class="k">Rainfall</div><div class="v" id="hRain">42<small style="font-size:12px"> mm</small></div></div>
+<div><div class="k">Temperature</div><div class="v" id="hTemp">28.4°</div></div>
+<div><div class="k">Wind</div><div class="v" id="hWind">12<small style="font-size:12px"> km/h</small></div></div>
+<div><div class="k">Panchayat</div><div class="v" id="hName" style="font-size:16px;color:var(--t)">Chandipur</div></div>
+</div>
+<div class="pbrisk">● Moderate rainfall risk</div>
+</div>
+</div>
+</div></header>
+
+<section id="forecast"><div class="wr">
+<span class="mt">01 · The atlas</span>
+<h2 class="se">One grid square is not one village.</h2>
+<div class="ctl">
+<div class="tg"><button id="bC" class="on"><span class="n">12</span><span class="mt">Coarse<br>12 km</span></button><button id="bF"><span class="n">1–3</span><span class="mt">Downscaled<br>1–3 km</span></button></div>
+<div class="mseg" id="mseg"><button data-m="rain" class="on">Rain</button><button data-m="temp">Temperature</button><button data-m="wind">Wind</button><button data-m="risk">Rainfall risk</button></div>
+</div>
+<div class="mb" id="mb"><div id="cvw" style="position:relative"><svg id="map" viewBox="0 0 900 560"></svg><canvas id="cv"></canvas></div>
+<div class="lg mt" style="color:#F4EFE3" id="lgl">Rain intensity<i></i></div>
+<div class="hand" id="ha"></div>
+<div class="pan" id="pan"></div></div>
+<div class="sc"><button id="pb">Play the day</button><div class="rw"><input id="rg" type="range" min="0" max="24" step=".1" value="0"><div class="tk mt"><span>Now</span><span>6 AM</span><span>12 PM</span><span>6 PM</span><span>12 AM</span></div><div class="mini" id="mini"></div></div><div class="hh se" id="hh">NOW</div></div>
+<span class="ilb" style="margin-top:26px;display:inline-block">Simulated data — illustrative prototype</span>
+</div></section>
+
+<section id="story"><div class="wr">
+<span class="mt">Why downscaling?</span>
+<h2 class="se">One forecast. Many local realities.</h2>
+<div class="story">
+<div class="stcol"><div class="lbl se">12 km block forecast</div><div class="stbox"><span>One coarse rainfall value</span><span>Same number for every village inside it</span></div></div>
+<div class="starrow">→</div>
+<div class="stcol"><div class="lbl se">Local context</div><div class="stbox mid"><span>Terrain · Elevation</span><span>Land Cover · NDVI</span><span>Historical Weather</span><span>Rainfall Observations</span></div></div>
+<div class="starrow">→</div>
+<div class="stcol"><div class="lbl se" style="color:var(--t)">1–3 km Panchayat forecast</div><div class="stbox"><span>ML downscaling model</span><span>One forecast per Panchayat</span></div></div>
+</div>
+</div></section>
+
+<section><div class="wr">
+<span class="mt">02 · Why this forecast?</span>
+<h2 class="se">Every local prediction should have an explanation.</h2>
+<div class="srcgrid" id="srcgrid"></div>
+<div class="fusionflow">
+<div class="fb">Multi-source<br>feature fusion</div><div class="fa">→</div>
+<div class="fb mid">ML<br>downscaling</div><div class="fa">→</div>
+<div class="fb">Panchayat<br>forecast</div>
+</div>
+<div class="contrib" id="cbs"></div>
+<span class="ilb" style="margin-top:14px;display:inline-block">Illustrative prototype contribution — not model-derived</span>
+</div></section>
+
+<section id="validation"><div class="wr">
+<span class="mt">03 · Validation</span>
+<h2 class="se">Prediction is not enough. We validate it.</h2>
+<span class="ilb" style="margin-top:16px;display:inline-block">Illustrative prototype data</span>
+<div class="legend" style="margin-top:24px"><span class="lg2"><i style="background:#8f8b7d"></i>Observed</span><span class="lg2"><i style="background:#C8754D"></i>Coarse forecast</span><span class="lg2"><i style="background:#183B36"></i>Downscaled forecast</span></div>
+<svg id="chart" viewBox="0 0 1000 320"></svg>
+<div class="metrics" id="metrics"></div>
+<p class="dsnote">Improvement = downscaled error vs coarse forecast error, calculated during model evaluation. No accuracy percentage is claimed here — evaluation against real ground observations is pending.</p>
+</div></section>
+
+<section id="advisory"><div class="wr">
+<span class="mt">04 · Agro-advisory</span>
+<h2 class="se">What does this mean on the ground?</h2>
+<div class="advflow"><span class="ab">42 mm rainfall expected</span><span class="ar">→</span><span class="ab" style="color:var(--t)" id="advrisk">Moderate rainfall risk</span><span class="ar">→</span><span class="ab">Action</span></div>
+<div class="grid4" id="grid4"></div>
+<span class="ilb" style="margin-top:20px;display:inline-block">Illustrative advisory · prototype rules, not agronomically validated</span>
+</div></section>
+
+<section id="explore"><div class="wr">
+<span class="mt">05 · Explore a Panchayat</span>
+<h2 class="se">Explore a Panchayat</h2>
+<div class="expwrap">
+<div><select id="expsel"></select>
+<div class="expgrid" id="expgrid"></div>
+</div>
+<div class="explist" id="explist"></div>
+</div>
+</div></section>
+
+<section><div class="wr">
+<span class="mt">06 · Data → decision</span>
+<h2 class="se">From cloud to a farmer's morning.</h2>
+<svg class="jn" id="jn" viewBox="0 0 1200 260"></svg>
+</div></section>
+
+<section id="data"><div class="wr">
+<span class="mt">07 · Data &amp; science</span>
+<h2 class="se">Many signals. One local forecast.</h2>
+<div class="dsflow">
+<div class="db">IMD</div><div class="da">+</div><div class="db">NASA IMERG</div><div class="da">+</div><div class="db">ERA5-Land</div><div class="da">+</div><div class="db">Bhuvan</div><div class="da">+</div><div class="db">AWS / Ground Observations</div>
+</div>
+<div class="dsflow" style="margin-top:8px">
+<div class="db acc">Feature Fusion</div><div class="da">→</div><div class="db acc">ML Downscaling</div><div class="da">→</div><div class="db acc">Panchayat Forecast</div><div class="da">→</div><div class="db acc">Validation</div>
+</div>
+<p class="dsnote">AWS / Ground Observations are used for validation where available — not every Panchayat has direct station coverage.</p>
+</div></section>
+
+<footer><div class="wr">
+<div class="fmain">
+<div><b class="se">Panchayat Weather Intelligence</b><span class="hand2">"From coarse forecasts to local decisions."</span></div>
+<div><span class="mt" style="color:#9db1ab">SIH26074</span><br><span style="font-size:15px">Smart India Hackathon 2026</span></div>
+</div>
+<div class="bottom"><span>Prototype · Simulated Data</span><span>© SIH26074</span></div>
+</div></footer>
+
+<script>
+const $=s=>document.querySelector(s),NS="http://www.w3.org/2000/svg",SD="#F4EFE3";
+const mk=(t,a)=>{const e=document.createElementNS(NS,t);for(const k in a)e.setAttribute(k,a[k]);return e};
+const hs=s=>{let h=2166136261;for(let i=0;i<s.length;i++){h^=s.charCodeAt(i);h=Math.imul(h,16777619)}return()=>{h=Math.imul(h^h>>>15,2246822519);h^=h>>>13;return(h>>>0)/4294967296}};
+
+/* ---------- nav ---------- */
+addEventListener("scroll",()=>$("#nav").classList.toggle("scrolled",scrollY>10));
+$("#hbtn").onclick=()=>$("#mnav").classList.add("on");
+$("#mx").onclick=()=>$("#mnav").classList.remove("on");
+document.querySelectorAll("#mnav a").forEach(a=>a.onclick=()=>$("#mnav").classList.remove("on"));
+
+/* ---------- geometry (shared Panchayat map) ---------- */
+const W=900,H=560,NC=8,NR=6;
+const NAMES=["Chandipur","Rampur","Devgarh","Sitapur","Kishanpur","Baldev Nagar","Madhopur","Ratanpur","Gopalgarh","Anandpur","Jamalpur","Tikri"];
+const V=[];for(let r=0;r<=NR;r++){V[r]=[];for(let c=0;c<=NC;c++){const q=hs(r+"v"+c);V[r][c]=[c*W/NC+(q()-.5)*30,r*H/NR+(q()-.5)*28]}}
+function edge(p,q){const f=p[0]<q[0]||p[0]==q[0]&&p[1]<q[1],a=f?p:q,b=f?q:p,r=hs(a+""+b),dx=b[0]-a[0],dy=b[1]-a[1],L=Math.hypot(dx,dy),o=[];for(let i=1;i<5;i++){const t=i/5,d=(r()-.5)*L*.24;o.push([a[0]+dx*t-dy/L*d,a[1]+dy*t+dx/L*d])}return f?o:o.reverse()}
+const cells=[],blocks={};let cn=0;
+for(let r=0;r<NR;r++)for(let c=0;c<NC;c++){
+const p=[V[r][c],V[r][c+1],V[r+1][c+1],V[r+1][c]],pts=[p[0],...edge(p[0],p[1]),p[1],...edge(p[1],p[2]),p[2],...edge(p[2],p[3]),p[3],...edge(p[3],p[0])];
+const cx=p.reduce((a,q)=>a+q[0],0)/4,cy=p.reduce((a,q)=>a+q[1],0)/4,q=hs("c"+r+c),nz=q();
+if(((cx-450)/385)**2+((cy-282)/235)**2>1+(nz-.5)*.35)continue;
+const rain=Math.max(4,9+38*Math.exp(-((cx-300)**2+(cy-215)**2)/(2*150*150))+30*Math.exp(-((cx-620)**2+(cy-380)**2)/(2*130*130))+(q()-.5)*10);
+const elev=150+300*(.5+.5*Math.sin(cx/130)*Math.cos(cy/110))+q()*40;
+const b=(r>>1)*4+(c>>1);
+const o={id:cells.length,n:++cn,name:NAMES[cn-1]||("Panchayat "+cn),r,c,pts,cx,cy,rain,elev,ndvi:.25+.55*(.5+.5*Math.sin(cy/90+cx/200))*(.7+q()*.3),temp:34-elev/62+q()*1.2,wind:7+q()*10,hum:52+rain*.55+q()*5,ang:q()*180,bi:b};
+o.d="M"+pts.map(z=>z[0].toFixed(1)+" "+z[1].toFixed(1)).join("L")+"Z";cells.push(o);(blocks[b]=blocks[b]||{id:b,m:[]}).m.push(o)}
+const bl=Object.values(blocks);bl.forEach((b,i)=>{b.i=i;["rain","temp","wind","hum","cx","cy"].forEach(k=>b[k]=b.m.reduce((a,x)=>a+x[k],0)/b.m.length);b.bx=b.id%4;b.by=b.id>>2;b.m.forEach(x=>x.b=b)});
+const wt=(o,h)=>.15+Math.exp(-Math.pow(((o.cx+o.cy*.35)-(-160+h/24*1300))/150,2));
+[...cells,...bl].forEach(o=>{o.sw=0;for(let k=0;k<24;k++)o.sw+=wt(o,k+.5)});
+const inst=(o,h)=>o.rain*wt(o,h)/o.sw;
+const lab=h=>h<.3?"NOW":["12 AM","1 AM","2 AM","3 AM","4 AM","5 AM","6 AM","7 AM","8 AM","9 AM","10 AM","11 AM","12 PM","1 PM","2 PM","3 PM","4 PM","5 PM","6 PM","7 PM","8 PM","9 PM","10 PM","11 PM","12 AM"][Math.round(h)];
+const lvl=r=>r<10?["Low",0,"#7d9c8f"]:r<25?["Mild",1,"#C8B26A"]:r<50?["Moderate",2,"#C8754D"]:["High",3,"#8a3a1f"];
+
+function fieldSvg(id,cellsArr,W2,H2,showLabels){
+let df="";cellsArr.forEach(c=>{const t2=c.ndvi>.6?"#3f6045":c.ndvi>.42?"#7b8a5a":"#a8996a";df+=`<pattern id="${id}p${c.id}" width="10" height="10" patternUnits="userSpaceOnUse" patternTransform="rotate(${c.ang})"><rect width="10" height="10" fill="${t2}"/><rect width="10" height="4" fill="#000" opacity=".1"/></pattern>`});
+let sc="";const rq=hs(id+"sat");for(let i=0;i<50;i++){const x=rq()*W2,y=rq()*H2,w=25+rq()*55,h=18+rq()*40;sc+=`<rect x="${x}" y="${y}" width="${w}" height="${h}" fill="${["#5d7a50","#3a5a44","#8a8f5f","#a99b6b","#2f5040"][i%5]}" opacity=".55" transform="rotate(${rq()*60-30} ${x} ${y})"/>`}
+return {df,sc};
+}
+/* ---------- HERO mini map ---------- */
+(function(){const sx=520/W,sy=340/H;const hf=fieldSvg("h",cells,520,340);
+const heroSel=cells.reduce((a,c)=>a.name=="Chandipur"?a:c.name=="Chandipur"?c:a,cells[0]);
+const sel=cells.find(c=>c.name=="Chandipur")||cells[0];
+let g="";cells.forEach(c=>{const scaled="M"+c.pts.map(p=>[p[0]*sx,p[1]*sy]).map(z=>z[0].toFixed(1)+" "+z[1].toFixed(1)).join("L")+"Z";
+const col=`rgba(200,117,77,${(.06+.84*Math.min(1,c.rain/70)).toFixed(2)})`;
+g+=`<path d="${scaled}" fill="${col}" stroke="#F4EFE3" stroke-width="${c===sel?2.4:.8}" stroke-opacity="${c===sel?1:.4}"/>`});
+$("#heroMap").innerHTML=`<defs>${hf.df}</defs><rect width="520" height="340" fill="#264a3d"/>${hf.sc}${g}
+<g class="shd" opacity=".25" style="filter:blur(14px)"><ellipse cx="140" cy="120" rx="90" ry="50" fill="#0b1f1b"/></g>`;
+$("#hRain").innerHTML=Math.round(sel.rain)+"<small style='font-size:12px'> mm</small>";
+$("#hTemp").textContent=sel.temp.toFixed(1)+"°";
+$("#hWind").innerHTML=Math.round(sel.wind)+"<small style='font-size:12px'> km/h</small>";
+$("#hName").textContent=sel.name;
+})();
+
+/* ---------- main map ---------- */
+const map=$("#map");const mf=fieldSvg("m",cells,W,H);
+map.innerHTML=`<defs>${mf.df}<filter id="nz"><feTurbulence type="fractalNoise" baseFrequency=".011" numOctaves="4" seed="4"/><feColorMatrix values="0 0 0 0 .96 0 0 0 0 .94 0 0 0 0 .89 0 0 0 .55 -.18"/></filter><filter id="bb"><feGaussianBlur stdDeviation="16"/></filter><clipPath id="cl">${cells.map(c=>`<path d="${c.d}"/>`).join("")}</clipPath></defs>
+<rect width="${W}" height="${H}" fill="#264a3d"/>${mf.sc}<rect width="${W}" height="${H}" filter="url(#nz)" opacity=".5"/>
+<path d="M-20 90C120 130 200 40 330 80S560 20 700 90 860 40 930 60" fill="none" stroke="#9db7b0" stroke-opacity=".5" stroke-width="5"/><path d="M60 560C110 470 40 400 90 320S60 180 130 130" fill="none" stroke="#9db7b0" stroke-opacity=".45" stroke-width="4"/><ellipse cx="820" cy="470" rx="34" ry="16" fill="#9db7b0" opacity=".45"/>
+<g id="gF"></g><g id="gO"></g><g clip-path="url(#cl)" id="gB" pointer-events="none"></g><g id="gS" clip-path="url(#cl)" pointer-events="none"><rect id="bs" fill="none" stroke="${SD}" stroke-width="5" opacity="0"/></g>
+<g class="shd" filter="url(#bb)" opacity=".28" pointer-events="none"><ellipse cx="200" cy="200" rx="150" ry="80" fill="#0b1f1b"/><ellipse cx="520" cy="420" rx="200" ry="70" fill="#0b1f1b"/></g>`;
+const gF=$("#gF"),gO=$("#gO"),gB=$("#gB");
+cells.forEach(c=>{gF.append(mk("path",{d:c.d,fill:`url(#mp${c.id})`}));const e=mk("path",{d:c.d,class:"cell"});e.onclick=()=>pick(c);c.el=e;gO.append(e)});
+bl.forEach((b,i)=>{const r=mk("rect",{x:b.bx*2*W/NC,y:b.by*2*H/NR,width:2*W/NC,height:2*H/NR,fill:"none",stroke:SD,"stroke-width":4,"stroke-opacity":.9});r.style.transitionDelay=i*90+"ms";b.rect=r;gB.append(r)});
+let metric="rain",fine=false,hr=0,sel2=null,timer=null;
+function riskCol(v){return lvl(inst({rain:v},0))[2]}
+function mval(o,h){if(metric=="rain")return inst(o,h);if(metric=="temp")return o.temp;if(metric=="wind")return o.wind*(.7+.3*Math.sin(h/24*6.28));return inst(o,h)}
+function mcol(o,h){const v=mval(o,h);
+if(metric=="rain")return `rgba(200,117,77,${(.06+.84*Math.min(1,v/4.6)).toFixed(2)})`;
+if(metric=="temp"){const t=Math.min(1,Math.max(0,(v-26)/10));return `rgba(200,117,77,${(.1+t*.75).toFixed(2)})`}
+if(metric=="wind"){const t=Math.min(1,v/18);return `rgba(157,183,176,${(.15+t*.7).toFixed(2)})`}
+return lvl(inst(o,h))[2]+"cc"}
+function paint(){cells.forEach(c=>c.el.style.fill=mcol(fine?c:c.b,hr));$("#hh").textContent=lab(hr);
+const bars=$("#mini");if(bars){let s="";for(let h2=0;h2<24;h2+=2){const v=inst(sel2?(fine?sel2:sel2.b):cells[0],h2);s+=`<i style="height:${Math.max(4,Math.min(46,v*7))}px"></i>`}bars.innerHTML=s}}
+$("#pan").innerHTML=`<div class="mt" id="pt"></div><div class="big se"><span id="n1">0</span><small id="u1">mm</small></div><div class="mt" id="cap"></div><div class="rd"><div><span>Wind</span><span id="n3">0</span></div><div><span>Humidity</span><span id="n4">0</span></div></div><div class="rk mt" id="rk"></div><div class="hand" id="pn"></div>`;
+function num(el,v,d){const f=+el.dataset.v||0,t0=performance.now();el.dataset.v=v;el._t=t0;(function s(t){if(el._t!==t0)return;const k=Math.min(1,(t-t0)/700),e=1-Math.pow(1-k,3);el.textContent=(f+(v-f)*e).toFixed(d);if(k<1)requestAnimationFrame(s)})(t0)}
+function upd(){if(!sel2)return;const o=fine?sel2:sel2.b,L=lvl(o.rain);
+$("#pt").textContent=fine?sel2.name:"Coarse cell "+(o.i+1)+" · "+o.m.length+" Panchayats";
+num($("#n1"),metric=="rain"?o.rain:metric=="temp"?o.temp:metric=="wind"?o.wind:L[1]+1,metric=="risk"?0:1);
+$("#u1").textContent=metric=="rain"?"mm · next 24h":metric=="temp"?"°C":metric=="wind"?"km/h avg":"of 4";
+$("#cap").textContent=metric=="rain"?"Rainfall":metric=="temp"?"Temperature":metric=="wind"?"Wind speed":"Rainfall risk level";
+$("#n3").textContent=Math.round(o.wind)+" km/h";$("#n4").textContent=Math.round(o.hum)+"%";
+$("#rk").textContent=L[0]+" rainfall risk";$("#advrisk").textContent=L[0]+" rainfall risk";
+let pk=0,pv=0;for(let h=0;h<=24;h+=.5){const v=inst(o,h);if(v>pv){pv=v;pk=h}}let e=24;for(let h=pk;h<=24;h+=.5)if(inst(o,h)<.45*pv){e=h;break}
+$("#pn").textContent="Rain peaks near "+lab(Math.round(pk))+", clears by "+lab(Math.round(e))+".";
+renderAdvisory(L[1]);}
+function place(){const p=$("#pan");if(!sel2)return;p.classList.add("on");const x=sel2.cx/W*100,y=Math.max(3,Math.min(48,sel2.cy/H*100-16));p.style.top=y+"%";if(x>52){p.style.left="auto";p.style.right=(103-x)+"%"}else{p.style.right="auto";p.style.left=(x+4)+"%"}}
+function pick(c){sel2=c;cells.forEach(k=>k.el.classList.toggle("sel",k===c&&fine));gO.append(c.el);const b=c.b,r=$("#bs");r.setAttribute("x",b.bx*2*W/NC);r.setAttribute("y",b.by*2*H/NR);r.setAttribute("width",2*W/NC);r.setAttribute("height",2*H/NR);r.setAttribute("opacity",fine?0:1);paint();upd();place()}
+function setF(f){if(f===fine)return;fine=f;const mb=$("#mb");mb.classList.add("slow");cells.forEach(c=>c.el.style.transitionDelay=f?(c.bi*70+Math.random()*350)+"ms":"0ms");
+map.classList.toggle("fine",f);bl.forEach(b=>b.rect.style.opacity=f?0:1);
+$("#bC").classList.toggle("on",!f);$("#bF").classList.toggle("on",f);$("#bs").setAttribute("opacity",f?0:1);
+cells.forEach(k=>k.el.classList.toggle("sel",k===sel2&&f));paint();upd();$("#pbres").textContent=f?"1–3 km — Panchayat scale":"12 km → 1–3 km";
+$("#ha").style.opacity=0;setTimeout(()=>{$("#ha").textContent=f?"Same storm — very different rain for each Panchayat.":"One number for ~12 km. Every village gets the same rain.";$("#ha").style.opacity=1},900);
+setTimeout(()=>{mb.classList.remove("slow");cells.forEach(c=>c.el.style.transitionDelay="")},3200)}
+$("#bC").onclick=()=>setF(false);$("#bF").onclick=()=>setF(true);
+$("#rg").oninput=e=>{hr=+e.target.value;paint();upd()};
+$("#pb").onclick=()=>{if(timer){clearInterval(timer);timer=null;$("#pb").textContent="Play the day";return}$("#pb").textContent="Pause";if(hr>=24)hr=0;timer=setInterval(()=>{hr+=.08;if(hr>=24){hr=24;clearInterval(timer);timer=null;$("#pb").textContent="Play the day"}$("#rg").value=hr;paint();upd()},50)};
+$("#mseg").addEventListener("click",e=>{const b=e.target.closest("button");if(!b)return;[...$("#mseg").children].forEach(x=>x.classList.toggle("on",x===b));metric=b.dataset.m;
+$("#lgl").innerHTML=(metric=="rain"?"Rain intensity":metric=="temp"?"Temperature":metric=="wind"?"Wind speed":"Rainfall risk")+"<i></i>";paint();upd()});
+/* particles */
+const cv=$("#cv"),cx2=cv.getContext("2d");let sx=1;
+function rs(){const d=devicePixelRatio||1,r=map.getBoundingClientRect();cv.width=r.width*d;cv.height=r.height*d;sx=cv.width/W}rs();addEventListener("resize",rs);
+const cellAt=(x,y)=>{let best=null,bd=1e9;for(const c of cells){const dd=(c.cx-x)**2+(c.cy-y)**2;if(dd<bd){bd=dd;best=c}}return bd<2800?best:null};
+const loc=(x,y)=>{const c=cellAt(x,y);return c?inst(fine?c:c.b,hr):0};
+const dr=Array.from({length:280},()=>({l:0})),wd=Array.from({length:60},()=>({t:[],l:0}));let T=0;
+function fr(){T+=.016;cx2.setTransform(1,0,0,1,0,0);cx2.clearRect(0,0,cv.width,cv.height);cx2.scale(sx,sx);
+if(metric=="rain"||metric=="risk"){cx2.strokeStyle="rgba(244,239,227,.6)";cx2.lineWidth=.9;cx2.beginPath();
+for(const d of dr){if(d.l<=0){d.x=Math.random()*W;d.y=Math.random()*H;d.l=8+Math.random()*10;d.on=Math.random()<Math.min(1,loc(d.x,d.y)/3.2)}
+d.l--;d.x-=1.6;d.y+=7;if(d.on){cx2.moveTo(d.x,d.y);cx2.lineTo(d.x+2,d.y-8)}}cx2.stroke()}
+cx2.lineWidth=1;for(const w of wd){if(w.l<=0){w.x=Math.random()*W;w.y=Math.random()*H;w.t=[];w.l=60+Math.random()*80}
+w.l--;const a=.5+Math.sin(w.x/140+T*.3)*.5+Math.cos(w.y/110)*.4,c=cellAt(w.x,w.y),spd=c?(c.wind/12)*1.6:.5;w.x+=Math.cos(a)*spd;w.y+=Math.sin(a)*spd*.7;w.t.push([w.x,w.y]);if(w.t.length>18)w.t.shift();
+if(c){cx2.strokeStyle=`rgba(244,239,227,${Math.min(.3,w.l/220)})`;cx2.beginPath();w.t.forEach((p,i)=>i?cx2.lineTo(p[0],p[1]):cx2.moveTo(p[0],p[1]));cx2.stroke()}}
+requestAnimationFrame(fr)}fr();
+
+/* ---------- why this forecast sources ---------- */
+const SRC=[["IMD / NWP","Forecast","Baseline coarse forecast field.","Rainfall, temp, wind at ~12 km."],
+["ERA5-Land","Historical weather","Long-term reanalysis used for seasonal context.","10-season rainfall climatology."],
+["IMERG","Satellite rainfall","Fills gaps between sparse ground gauges.","Half-hourly precipitation estimate."],
+["Bhuvan","Terrain + land cover","Elevation and land-use context for local variation.","Elevation, slope, crop cover class."],
+["AWS / Ground observations","Validation","Used to validate and correct bias where available.","Nearest station rainfall reading."]];
+$("#srcgrid").innerHTML=SRC.map((s,i)=>`<div class="srcc" data-i="${i}"><h4 class="se">${s[0]}</h4><span class="mt">${s[1]}</span><div class="srcpop"><b>Contributes:</b> ${s[2]}<br><b>Example variable:</b> ${s[3]}</div></div>`).join("");
+$("#srcgrid").addEventListener("click",e=>{const c=e.target.closest(".srcc");if(!c)return;c.classList.toggle("on")});
+const W2=[["IMD / NWP forecast",32],["Terrain / land cover",22],["Satellite rainfall (IMERG)",18],["Historical weather (ERA5-Land)",16],["Ground observations",12]];
+const tot=W2.reduce((a,x)=>a+x[1],0);
+$("#cbs").innerHTML=W2.map(x=>`<div class="cb"><span>${x[0]}</span><div class="tr"><div class="fl" data-w="${x[1]}"></div></div><span class="mt">${x[1]}%</span></div>`).join("");
+new IntersectionObserver((es,ob)=>{if(es[0].isIntersecting){document.querySelectorAll("#cbs .fl").forEach(f=>f.style.width=f.dataset.w+"%");ob.disconnect()}},{threshold:.4}).observe($("#cbs"));
+
+/* ---------- validation chart ---------- */
+(function(){const N=14,q=hs("valid");const obs=[],coarse=[],down=[];
+for(let i=0;i<N;i++){const base=18+14*Math.sin(i/3)+(q()-.5)*10+(i>8?22*Math.exp(-((i-10)**2)/6):0);
+const o=Math.max(0,base+(q()-.5)*6),c=Math.max(0,base*.55+6+(q()-.5)*14),d=Math.max(0,o*(0.82+q()*.3)+(q()-.5)*5);
+obs.push(o);coarse.push(c);down.push(d)}
+const CW=1000,CH=320,pad=36,mx=Math.max(...obs,...coarse,...down)*1.15;
+const X=i=>pad+i/(N-1)*(CW-2*pad),Y=v=>CH-pad-(v/mx)*(CH-2*pad);
+function line(data){return "M"+data.map((v,i)=>X(i).toFixed(1)+","+Y(v).toFixed(1)).join(" L")}
+let gy="";for(let g=0;g<=4;g++){const y=pad+g*(CH-2*pad)/4;gy+=`<line x1="${pad}" y1="${y}" x2="${CW-pad}" y2="${y}" stroke="#e9e3d2" stroke-width="1"/>`}
+$("#chart").innerHTML=`${gy}<path d="${line(coarse)}" fill="none" stroke="#C8754D" stroke-width="2" stroke-dasharray="5 4"/><path d="${line(down)}" fill="none" stroke="#183B36" stroke-width="2.4"/><path d="${line(obs)}" fill="none" stroke="#8f8b7d" stroke-width="2" stroke-dasharray="1 4" stroke-linecap="round"/>`;
+const err=(a,b)=>a.map((v,i)=>v-b[i]),mae=e=>e.reduce((a,v)=>a+Math.abs(v),0)/e.length,rmse=e=>Math.sqrt(e.reduce((a,v)=>a+v*v,0)/e.length),bias=e=>e.reduce((a,v)=>a+v,0)/e.length;
+const eC=err(coarse,obs),eD=err(down,obs);
+const M=[["MAE",mae(eC),mae(eD)],["RMSE",rmse(eC),rmse(eD)],["Bias",bias(eC),bias(eD)]];
+$("#metrics").innerHTML=M.map(m=>`<div class="mc"><span class="mt">${m[0]} · prototype metric</span><div class="v se">${m[2].toFixed(1)}<small>mm</small></div><div style="font-size:12px;color:var(--t);margin-top:6px">coarse: ${m[1].toFixed(1)} mm · calculated during model evaluation</div></div>`).join("");
+})();
+
+/* ---------- advisory grid ---------- */
+const cropReco=(L)=>[["Irrigation",L>=2?"WAIT":L==1?"MONITOR":"PROCEED",L>=2?"Avoid unnecessary irrigation before rainfall.":L==1?"Light rain may reduce water need — check soil first.":"No rain constraint — irrigate on schedule.","Forecast shows "+(L>=2?"significant":"limited")+" rainfall in the window → soil will "+(L>=2?"receive enough moisture":"stay comparatively dry")+" → "+(L>=2?"hold irrigation":"proceed as planned")+"."],
+["Spraying",L>=2?"WAIT":L==1?"PLAN":"PROCEED",L>=2?"Delay chemical spraying until the rainfall window passes.":L==1?"Plan spraying for a drier slot later in the window.":"Conditions are dry enough to spray as planned.","Rain would wash off any spray applied now → efficacy would drop sharply → "+(L>=2?"wait for skies to clear":"proceed with normal timing")+"."],
+["Field operations",L>=3?"WAIT":L==2?"PLAN":"PROCEED",L>=3?"Avoid heavy machinery on wet or waterlogged fields.":L==2?"Sequence field work around the expected rain window.":"Fields are workable for routine operations.","Wet soil under machinery compacts and damages fields → "+(L>=2?"operations are sequenced around the wet spell":"no such constraint applies today")+"."],
+["Crop protection",L>=2?"PLAN":"MONITOR",L>=2?"Watch for waterlogging / pest and disease pressure.":"Conditions are stable — routine monitoring is enough.","Wet, humid spells raise pest and disease pressure → "+(L>=2?"active monitoring is advised":"routine checks are sufficient")+"."]];
+function renderAdvisory(L){const G=cropReco(L);
+$("#grid4").innerHTML=G.map((g,i)=>`<div class="gc"><div><h3 class="se">${g[0]}</h3><p>${g[2]}</p></div><div><div class="stat st-${g[1]}"><i></i>${g[1]}</div><button class="whyln" data-i="${i}">Why? ＋</button><div class="whyd" id="wd${i}">${g[3]} <span style="opacity:.7">(illustrative rule)</span></div></div></div>`).join("");
+$("#grid4").querySelectorAll(".whyln").forEach(b=>b.onclick=()=>{const d=$("#wd"+b.dataset.i);d.classList.toggle("on");b.textContent=d.classList.contains("on")?"Why? −":"Why? ＋"})}
+
+/* ---------- explore a panchayat ---------- */
+$("#expsel").innerHTML=cells.map(c=>`<option value="${c.id}">${c.name} Panchayat</option>`).join("");
+function renderExplore(c){const L=lvl(c.rain);
+$("#expgrid").innerHTML=`<div class="egc"><span class="mt">Rain</span><div class="v">${Math.round(c.rain)}<small style="font-size:14px"> mm</small></div></div><div class="egc"><span class="mt">Temp</span><div class="v">${c.temp.toFixed(1)}°C</div></div><div class="egc"><span class="mt">Wind</span><div class="v">${Math.round(c.wind)}<small style="font-size:14px"> km/h</small></div></div>`;
+$("#explist").innerHTML=[["Humidity",Math.round(c.hum)+"%"],["Risk",L[0]],["Elevation",Math.round(c.elev)+" m"],["NDVI",c.ndvi.toFixed(2)],["Land cover",c.ndvi>.5?"Dense cropland":"Sparse / fallow"],["Nearest observation","~"+(4+Math.round(c.id%9))+" km · "+(c.id%3==0?"available":"not directly covered")]].map(x=>`<div class="eli"><span class="mt">${x[0]}</span><span>${x[1]}</span></div>`).join("")}
+$("#expsel").onchange=e=>renderExplore(cells.find(c=>c.id==+e.target.value));
+
+/* ---------- journey ---------- */
+(function(){const M=[`<g fill="#C8754D">${[0,1,2].map(i=>[0,1,2].map(j=>`<rect x="${i*22}" y="${j*22}" width="20" height="20" opacity="${.15+((i*3+j)%4)*.22}"/>`).join("")).join("")}</g>`,
+`<g fill="none" stroke="#183B36" stroke-width="1.2">${[10,22,34,46].map(r=>`<ellipse cx="34" cy="34" rx="${r*1.3}" ry="${r}" transform="rotate(-15 34 34)"/>`).join("")}</g>`,
+`<path d="M8 30L30 6L56 14L64 40L44 64L14 56Z" fill="#183B36" opacity=".9"/><circle cx="36" cy="34" r="5" fill="#C8754D"/>`,
+`<g fill="#C8754D">${Array.from({length:36},(_,i)=>`<rect x="${(i%6)*11}" y="${(i/6|0)*11}" width="10" height="10" opacity="${.1+((i*7)%9)/11}"/>`).join("")}</g>`,
+`<path d="M4 56A30 30 0 0 1 64 56" fill="none" stroke="#183B36" stroke-width="2"/><path d="M4 56A30 30 0 0 1 24 28" fill="none" stroke="#C8754D" stroke-width="6"/>`,
+`<g stroke="#183B36" stroke-width="1.4" fill="none">${[0,1,2,3,4].map(i=>`<path d="M${i*14} 66L${20+i*6} 20"/>`).join("")}</g>`];
+const T=["Block Forecast","Multi-source Context","ML Downscaling","Panchayat Forecast","Risk Assessment","Agro-Advisory"],S=["~12 km","terrain · cover · NDVI","learned correction","1–3 km","thresholds","plain language"];
+$("#jn").innerHTML=`<path class="ln" pathLength="1" d="M20 150C150 110 200 180 300 155S450 125 500 155 650 185 700 155 850 125 900 155 1050 185 1180 164" fill="none" stroke="#C8754D" stroke-width="2"/>`+T.map((t,i)=>{const x=100+i*200,y=[140,155,155,155,155,164][i];return`<g class="nd" style="transition-delay:${.5+i*.5}s"><g transform="translate(${x-34} 30)">${M[i]}</g><circle cx="${x}" cy="${y}" r="6" fill="#FFFDF8" stroke="#C8754D" stroke-width="2"/><text x="${x}" y="205" text-anchor="middle" font-family="Bookman Old Style,Georgia,serif" font-size="17" fill="#183B36">${String(i+1).padStart(2,"0")} · ${t}</text><text x="${x}" y="224" text-anchor="middle" font-family="Inter" font-size="9" letter-spacing="1.5" fill="#6f6e66">${S[i].toUpperCase()}</text></g>`}).join("");
+new IntersectionObserver((e,o)=>e[0].isIntersecting&&($("#jn").classList.add("in"),o.disconnect()),{threshold:.4}).observe($("#jn"))})();
+
+/* ---------- init ---------- */
+$("#ha").textContent="One number for ~12 km. Every village gets the same rain.";
+pick(cells.find(c=>c.name=="Chandipur")||cells[0]);
+renderExplore(cells[0]);
+</script><script src="assets/fx.js"></script></body></html>

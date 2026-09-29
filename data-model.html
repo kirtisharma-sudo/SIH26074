@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Data & Model · Panchayat Weather Intelligence</title>
+<style>
+:root{--g:#183B36;--s:#F4EFE3;--t:#C8754D;--w:#FFFDF8;--m:#6f6e66;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);color-scheme:light}
+html{scroll-behavior:smooth}*{box-sizing:border-box}
+body{margin:0;background:var(--w);color:var(--g);font:14px/1.55 Inter,system-ui,-apple-system,"Segoe UI",sans-serif}
+.se{font-family:"Bookman Old Style",Bookman,Georgia,serif;font-weight:400;letter-spacing:-.025em}
+.mt{font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--m)}
+.wr{max-width:1240px;margin:0 auto;padding:0 28px}
+nav{display:flex;justify-content:space-between;align-items:center;padding:26px 0;border-bottom:1px solid #e6e0d0}
+nav b{font-size:19px}
+nav .links{display:flex;gap:30px;align-items:center;flex-wrap:wrap}
+nav a{color:var(--g);text-decoration:none;font-size:12.5px;letter-spacing:.06em;padding-bottom:3px;opacity:.6;transition:.3s}
+nav a.on,nav a:hover{opacity:1;border-bottom:1px solid var(--t)}
+header.top{padding:70px 0 0}
+h1{font-size:clamp(34px,5.8vw,72px);line-height:1.05;margin:8px 0 0;max-width:14em}
+.sub{max-width:480px;font-size:16px;color:#33423e;margin-top:18px}
+section{padding-top:90px}
+h2{font-size:clamp(26px,3.6vw,44px);line-height:1.05;margin:6px 0 0}
+/* flow */
+.flowsvg{width:100%;height:auto;margin-top:50px}
+.src{cursor:default}
+.srcname{font-family:"Bookman Old Style",Georgia,serif}
+.flowline{stroke-dasharray:1;stroke-dashoffset:1;transition:stroke-dashoffset 2.4s ease}
+.flowline.in{stroke-dashoffset:0}
+.pulse{r:2.4;fill:#C8754D}
+.node{opacity:0;transition:opacity .8s}
+.node.in{opacity:1}
+/* IO row */
+.io{display:grid;grid-template-columns:repeat(4,1fr);gap:0;margin-top:90px;border-top:1px solid var(--g);border-bottom:1px solid var(--g)}
+.ioc{padding:26px 22px 26px 0;border-right:1px solid #d9d2bf}
+.ioc:last-child{border-right:0}
+.ioc .mt{margin-bottom:10px}
+.ioc h3{font-size:19px;margin:0 0 8px}
+.ioc ul{list-style:none;margin:0;padding:0;font-size:13px;color:var(--m)}
+.ioc li{padding:4px 0;border-bottom:1px dotted #e0dac9}
+.ioc li:last-child{border-bottom:0}
+.ioarrow{position:relative}
+.ioarrow:after{content:"→";position:absolute;right:-13px;top:26px;color:var(--t)}
+.ioarrow:last-child:after{content:""}
+/* layer viewer */
+.lyctl{display:flex;flex-wrap:wrap;gap:0;margin-top:40px;border-top:1px solid var(--g);border-bottom:1px solid var(--g)}
+.lyctl button{border:0;border-right:1px solid #d9d2bf;background:none;color:var(--g);font:inherit;font-size:12px;letter-spacing:.08em;padding:14px 22px;cursor:pointer;opacity:.45;transition:.3s;font-family:"Bookman Old Style",Georgia,serif}
+.lyctl button:last-child{border-right:0}
+.lyctl button.on{opacity:1;color:var(--t)}
+.mapwrap{position:relative;background:#183B36;overflow:hidden;border-radius:2px;margin-top:0}
+#lmap{display:block;width:100%;height:auto}
+.desc{margin-top:16px;max-width:520px;color:var(--m);font-size:13px}
+/* tech */
+.tech{display:grid;grid-template-columns:repeat(3,1fr);gap:0;margin-top:60px;border-top:1px solid var(--g)}
+.tc{padding:28px 24px 28px 0;border-right:1px solid #d9d2bf}
+.tc:last-child{border-right:0}
+.tc h3{font-size:20px;margin:0 0 10px}
+.tc p{font-size:13px;color:var(--m);margin:0}
+.tc .tag{display:inline-block;margin-top:12px;font-size:10px;letter-spacing:.1em;text-transform:uppercase;border:1px solid #d9d2bf;padding:4px 9px;border-radius:99px;color:var(--m)}
+footer{padding:70px 0 40px;display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px;border-top:1px solid #e6e0d0;margin-top:100px}
+@media(max-width:860px){.io,.tech{grid-template-columns:1fr}.ioc,.tc{border-right:0;border-bottom:1px solid #d9d2bf}.ioarrow:after{content:"↓";right:auto;left:0;top:auto;bottom:-14px}}
+</style><link rel="stylesheet" href="assets/fx.css"></head><body>
+
+<nav class="wr"><b class="se">Panchayat Weather Intelligence</b>
+<div class="links"><a href="index.html">Home</a><a href="forecast-atlas.html">Forecast Atlas</a><a href="agro-advisory.html">Advisory</a><a href="validation.html">Validation</a><a class="on" href="data-model.html">Data &amp; Model</a><a href="about.html">About</a></div>
+</nav>
+
+<header class="top"><div class="wr">
+<span class="mt">Data &amp; model</span>
+<h1 class="se">Many signals. One local forecast.</h1>
+<p class="sub">Where does a Panchayat forecast come from?</p>
+</div></header>
+
+<section><div class="wr">
+<span class="mt">How the inputs combine</span>
+<h2 class="se">Five sources, one fused field.</h2>
+<svg class="flowsvg" id="flow" viewBox="0 0 1200 480"></svg>
+</div></section>
+
+<section><div class="wr">
+<span class="mt">The pipeline, end to end</span>
+<h2 class="se">Input → Context → Model → Output.</h2>
+<div class="io" id="io"></div>
+</div></section>
+
+<section><div class="wr">
+<span class="mt">Layer viewer</span>
+<h2 class="se">Inspect what the model sees.</h2>
+<div class="lyctl" id="lyctl"></div>
+<div class="mapwrap"><svg id="lmap" viewBox="0 0 900 500"></svg></div>
+<p class="desc" id="ldesc"></p>
+</div></section>
+
+<section><div class="wr">
+<span class="mt">Under the hood</span>
+<h2 class="se">Method, not magic.</h2>
+<div class="tech" id="tech"></div>
+</div></section>
+
+<footer class="wr"><span class="mt">Panchayat Weather Intelligence · SIH26074</span><span class="mt">Prototype · simulated data</span></footer>
+
+<script>
+const $=s=>document.querySelector(s),NS="http://www.w3.org/2000/svg";
+const mk=(t,a)=>{const e=document.createElementNS(NS,t);for(const k in a)e.setAttribute(k,a[k]);return e};
+const hs=s=>{let h=2166136261;for(let i=0;i<s.length;i++){h^=s.charCodeAt(i);h=Math.imul(h,16777619)}return()=>{h=Math.imul(h^h>>>15,2246822519);h^=h>>>13;return(h>>>0)/4294967296}};
+
+// ---- flow diagram
+const SRC=[["IMD / NWP","Forecast data"],["ERA5-Land","Historical weather"],["IMERG","Satellite rainfall"],["Bhuvan / geospatial","Terrain + land information"],["AWS / Ground stations","Validation where available"]];
+const flow=$("#flow"),FW=1200,FH=480;
+const sy=i=>60+i*90,sx=140,fx=560,fy=240,dx=800,dy=240,ox=1080,oy=240;
+let svgc=`<defs><marker id="ah" markerWidth="7" markerHeight="7" refX="5" refY="2.5" orient="auto"><path d="M0 0L5 2.5L0 5Z" fill="#C8754D"/></marker></defs>`;
+SRC.forEach((s,i)=>{svgc+=`<g class="node" id="sn${i}"><text x="${sx}" y="${sy(i)-6}" font-size="17" class="srcname" fill="#183B36">${s[0]}</text><text x="${sx}" y="${sy(i)+11}" font-size="10" letter-spacing="1.4" fill="#6f6e66">${s[1].toUpperCase()}</text></g>`});
+SRC.forEach((s,i)=>{svgc+=`<path class="flowline" id="fl${i}" pathLength="1" d="M${sx+150} ${sy(i)-8}C${(sx+150+fx-60)/2} ${sy(i)-8},${(sx+150+fx-60)/2} ${fy},${fx-60} ${fy}" fill="none" stroke="#C8754D" stroke-width="1.4" opacity=".8"/>`});
+svgc+=`<g class="node" id="ffn"><rect x="${fx-58}" y="${fy-30}" width="140" height="60" fill="none" stroke="#183B36" stroke-width="1.4"/><text x="${fx+12}" y="${fy-4}" text-anchor="middle" font-size="15" class="srcname" fill="#183B36">Feature</text><text x="${fx+12}" y="${fy+16}" text-anchor="middle" font-size="15" class="srcname" fill="#183B36">Fusion</text></g>`;
+svgc+=`<path class="flowline" id="fl5" pathLength="1" d="M${fx+82} ${fy}H${dx-58}" stroke="#183B36" stroke-width="1.6" marker-end="url(#ah)" fill="none"/>`;
+svgc+=`<g class="node" id="mln"><rect x="${dx-58}" y="${dy-30}" width="150" height="60" fill="#183B36"/><text x="${dx+17}" y="${dy-4}" text-anchor="middle" font-size="15" class="srcname" fill="#F4EFE3">ML</text><text x="${dx+17}" y="${dy+16}" text-anchor="middle" font-size="15" class="srcname" fill="#F4EFE3">Downscaling</text></g>`;
+svgc+=`<path class="flowline" id="fl6" pathLength="1" d="M${dx+92} ${dy}H${ox-90}" stroke="#183B36" stroke-width="1.6" marker-end="url(#ah)" fill="none"/>`;
+svgc+=`<g class="node" id="opn"><text x="${ox}" y="${oy-4}" text-anchor="middle" font-size="19" class="srcname" fill="#C8754D">Panchayat</text><text x="${ox}" y="${oy+18}" text-anchor="middle" font-size="19" class="srcname" fill="#C8754D">Forecast</text></g>`;
+flow.innerHTML=svgc;
+const io=new IntersectionObserver((es,ob)=>{if(es[0].isIntersecting){SRC.forEach((_,i)=>{setTimeout(()=>{$("#sn"+i).classList.add("in");$("#fl"+i).classList.add("in")},i*220)});
+setTimeout(()=>{$("#ffn").classList.add("in")},SRC.length*220+300);
+setTimeout(()=>{$("#fl5").classList.add("in")},SRC.length*220+700);
+setTimeout(()=>{$("#mln").classList.add("in")},SRC.length*220+1500);
+setTimeout(()=>{$("#fl6").classList.add("in")},SRC.length*220+1900);
+setTimeout(()=>{$("#opn").classList.add("in")},SRC.length*220+2700);
+ob.disconnect()}},{threshold:.3});
+io.observe(flow);
+
+// ---- IO pipeline row
+const IO=[["Input","12 km weather field",["Coarse NWP grid","Rainfall, temperature, wind"]],
+["Context","Physical & historical context",["Terrain / elevation","Land cover","NDVI","Historical weather","Ground observations"]],
+["Model","ML downscaling",["Learns local correction terms","Trained per agro-climatic zone"]],
+["Output","1–3 km Panchayat forecast",["One forecast per Panchayat","Feeds advisory + validation"]]];
+$("#io").innerHTML=IO.map((c,i)=>`<div class="ioc ioarrow"><span class="mt">0${i+1}</span><h3 class="se">${c[0]}</h3><p style="font-size:13px;color:var(--m);margin:0 0 10px">${c[1]}</p><ul>${c[2].map(x=>`<li>${x}</li>`).join("")}</ul></div>`).join("");
+
+// ---- shared map geometry for layer viewer
+const VW=900,VH=500,NC=8,NR=5,SD="#F4EFE3";
+const V=[];for(let r=0;r<=NR;r++){V[r]=[];for(let c=0;c<=NC;c++){const g=hs(r+"dv"+c);V[r][c]=[c*VW/NC+(g()-.5)*26,r*VH/NR+(g()-.5)*24]}}
+function edge(p,pp){const f=p[0]<pp[0]||p[0]==pp[0]&&p[1]<pp[1],a=f?p:pp,b=f?pp:p,r=hs(a+""+b),dx=b[0]-a[0],dy=b[1]-a[1],L=Math.hypot(dx,dy),o=[];for(let i=1;i<4;i++){const t=i/4,d=(r()-.5)*L*.22;o.push([a[0]+dx*t-dy/L*d,a[1]+dy*t+dx/L*d])}return f?o:o.reverse()}
+const cells=[];const cq=hs("dmodel");
+for(let r=0;r<NR;r++)for(let c=0;c<NC;c++){const p=[V[r][c],V[r][c+1],V[r+1][c+1],V[r+1][c]],pts=[p[0],...edge(p[0],p[1]),p[1],...edge(p[1],p[2]),p[2],...edge(p[2],p[3]),p[3],...edge(p[3],p[0])];
+const cx=p.reduce((a,z)=>a+z[0],0)/4,cy=p.reduce((a,z)=>a+z[1],0)/4,nz=cq();
+if(((cx-450)/390)**2+((cy-250)/220)**2>1+(nz-.5)*.3)continue;
+const elev=150+300*(.5+.5*Math.sin(cx/130)*Math.cos(cy/110))+cq()*40,ndvi=.25+.55*(.5+.5*Math.sin(cy/90+cx/200))*(.7+cq()*.3),rain=Math.max(4,9+38*Math.exp(-((cx-300)**2+(cy-190)**2)/(2*150*150))+30*Math.exp(-((cx-620)**2+(cy-330)**2)/(2*130*130)));
+cells.push({d:"M"+pts.map(z=>z[0].toFixed(1)+" "+z[1].toFixed(1)).join("L")+"Z",cx,cy,elev,ndvi,rain,ang:cq()*180})}
+const lmap=$("#lmap");let df="";
+cells.forEach((c,i)=>{const t=c.ndvi>.6?"#3f6045":c.ndvi>.42?"#7b8a5a":"#a8996a";df+=`<pattern id="lp${i}" width="10" height="10" patternUnits="userSpaceOnUse" patternTransform="rotate(${c.ang})"><rect width="10" height="10" fill="${t}"/><rect width="10" height="4" fill="#000" opacity=".1"/></pattern>`});
+let scr="";const rq=hs("lsat");for(let i=0;i<70;i++){const x=rq()*VW,y=rq()*VH,w=30+rq()*70,h=20+rq()*50;scr+=`<rect x="${x}" y="${y}" width="${w}" height="${h}" fill="${["#5d7a50","#3a5a44","#8a8f5f","#a99b6b","#2f5040"][i%5]}" opacity=".55" transform="rotate(${rq()*60-30} ${x} ${y})"/>`}
+lmap.innerHTML=`<defs>${df}<clipPath id="lcl">${cells.map(c=>`<path d="${c.d}"/>`).join("")}</clipPath></defs>
+<rect width="${VW}" height="${VH}" fill="#264a3d"/>
+<g id="Lrainfall" clip-path="url(#lcl)" style="opacity:0;transition:opacity .8s">${cells.map(c=>`<path d="${c.d}" fill="rgba(200,117,77,${(.06+.84*Math.min(1,c.rain/70)).toFixed(2)})"/>`).join("")}</g>
+<g id="Llandcover" style="opacity:0;transition:opacity .8s">${scr}${cells.map((c,i)=>`<path d="${c.d}" fill="url(#lp${i})"/>`).join("")}</g>
+<g id="Lterrain" style="opacity:0;transition:opacity .8s">${[1,2,3,4,5,6].map(k=>`<path d="M${-20} ${k*90}C${300} ${k*90-40+k*6} ${600} ${k*90-10} ${930} ${k*90}" fill="none" stroke="${SD}" stroke-opacity=".55" stroke-width="1.2"/>`).join("")}${cells.filter((c,i)=>i%3==0).map(c=>`<text x="${c.cx}" y="${c.cy}" font-size="9" fill="${SD}" opacity=".7" font-family="Inter">${Math.round(c.elev)}m</text>`).join("")}</g>
+<g id="Lndvi" style="opacity:0;transition:opacity .8s">${cells.map((c,i)=>{let s="";const nn=Math.round(70+c.ndvi*260),q=hs("ndvi"+i);for(let k=0;k<nn;k++){const a=c.cx+(q()-.5)*90,b=c.cy+(q()-.5)*70;s+=`<line x1="${a}" y1="${b}" x2="${a}" y2="${b-3}" stroke="${SD}" stroke-width="1" opacity="${.3+c.ndvi*.6}"/>`}return s}).join("")}</g>
+<g id="Lobservations" style="opacity:0;transition:opacity .8s">${Array.from({length:16},(_, i)=>{const q=hs("obsL"+i);return `<circle cx="${q()*VW}" cy="${q()*VH}" r="5" fill="none" stroke="${SD}" stroke-width="1.6"/><circle cx="${q()*VW}" cy="${q()*VH}" r="1.6" fill="${SD}"/>`}).join("")}</g>
+<path d="${cells.map(c=>c.d).join(" ")}" fill="none" stroke="${SD}" stroke-opacity=".35" stroke-width="1"/>`;
+const LAY=[["terrain","Terrain","Elevation contours that shape orographic rainfall and drainage."],
+["landcover","Land cover","Cropland, fallow and settlement texture from satellite land-use classes."],
+["ndvi","NDVI","Vegetation vigour — denser marks indicate healthier, more active crop cover."],
+["rainfall","Rainfall","The precipitation field the downscaling model is trying to refine."],
+["observations","Observations","Ground stations and rain gauges used to correct and validate the model."]];
+$("#lyctl").innerHTML=LAY.map((l,i)=>`<button data-l="${l[0]}" class="${i==3?'on':''}">${l[1]}</button>`).join("");
+function setLayer(k){["terrain","landcover","ndvi","rainfall","observations"].forEach(n=>{const el=$("#L"+n);if(el)el.style.opacity=n==k?1:0});
+[...$("#lyctl").children].forEach(b=>b.classList.toggle("on",b.dataset.l===k));
+$("#ldesc").textContent=LAY.find(l=>l[0]===k)[2]}
+$("#lyctl").addEventListener("click",e=>{const b=e.target.closest("button");if(b)setLayer(b.dataset.l)});
+setLayer("rainfall");
+
+// ---- tech section
+const TECH=[["Model","Gradient-boosted trees (XGBoost baseline) learn a local correction between the coarse forecast and observed conditions, producing a downscaled 1–3 km field.","ML baseline"],
+["Feature engineering","Spatial features (elevation, slope, land cover, NDVI) and temporal features (season, recent rainfall history, station anomalies) are combined per Panchayat.","Spatial + temporal"],
+["Validation","Downscaled output is checked against observed rainfall alongside the original coarse forecast, using MAE, RMSE and bias.","Observed vs coarse vs downscaled"]];
+$("#tech").innerHTML=TECH.map(t=>`<div class="tc"><h3 class="se">${t[0]}</h3><p>${t[1]}</p><span class="tag">${t[2]}</span></div>`).join("");
+</script><script src="assets/fx.js"></script></body></html>

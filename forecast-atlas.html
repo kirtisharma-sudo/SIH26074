@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Forecast Atlas · Panchayat Weather Intelligence</title>
+<style>
+:root{--g:#183B36;--s:#F4EFE3;--t:#C8754D;--w:#FFFDF8;--m:#6f6e66;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);color-scheme:light}
+html{scroll-behavior:smooth}*{box-sizing:border-box}
+body{margin:0;background:var(--w);color:var(--g);font:14px/1.55 Inter,system-ui,-apple-system,"Segoe UI",sans-serif}
+.se{font-family:"Bookman Old Style",Bookman,Georgia,serif;font-weight:400;letter-spacing:-.025em}
+.mt{font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--m)}
+.hand{font-family:"Segoe Script","Bradley Hand","Snell Roundhand","Brush Script MT",cursive;font-style:italic;color:var(--t)}
+.wr{max-width:1240px;margin:0 auto;padding:0 28px}
+nav{display:flex;justify-content:space-between;align-items:center;padding:26px 0;border-bottom:1px solid #e6e0d0}
+nav b{font-size:19px}
+nav .links{display:flex;gap:30px;align-items:center}
+nav a{color:var(--g);text-decoration:none;font-size:12.5px;letter-spacing:.06em;padding-bottom:3px;opacity:.6;transition:.3s}
+nav a.on,nav a:hover{opacity:1;border-bottom:1px solid var(--t)}
+header.top{padding:70px 0 0}
+h1{font-size:clamp(42px,7vw,96px);line-height:.98;margin:8px 0 0}
+.sub{max-width:460px;font-size:16px;color:#33423e;margin-top:18px}
+section{padding-top:70px}
+/* controls */
+.ctl{display:flex;flex-wrap:wrap;gap:38px;align-items:flex-end;margin-top:40px;border-top:1px solid var(--g);border-bottom:1px solid var(--g);padding:18px 0}
+.tg{display:flex;gap:0}
+.tg button{border:0;background:none;color:var(--g);padding:8px 0;margin-right:26px;cursor:pointer;font:inherit;opacity:.4;transition:.4s;display:flex;flex-direction:column;align-items:flex-start;gap:2px}
+.tg button.on{opacity:1}
+.tg .n{font-size:22px;font-family:"Bookman Old Style",Georgia,serif}
+.tg button.on .n{color:var(--t)}
+.mseg{display:flex;gap:0;margin-left:auto}
+.mseg button{border:1px solid var(--g);border-left:0;background:none;color:var(--g);font:inherit;font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;padding:9px 16px;cursor:pointer;opacity:.55;transition:.3s}
+.mseg button:first-child{border-left:1px solid var(--g)}
+.mseg button.on{background:var(--g);color:var(--s);opacity:1}
+/* map */
+.mb{position:relative;background:#183B36;overflow:hidden;border-radius:2px;margin-top:26px}
+#map{display:block;width:100%;height:auto}
+#cv{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}
+.cell{stroke:#F4EFE3;stroke-opacity:0;stroke-width:1.1;cursor:pointer;transition:fill .3s,stroke-opacity .3s,transform .6s;transform-box:fill-box;transform-origin:center}
+.fine .cell{stroke-opacity:.8}
+.fine .cell:hover{stroke-width:2.2;stroke-opacity:1}
+.slow .cell{transition:fill 1.9s ease,stroke-opacity 1.5s ease .6s,transform .6s}
+.cell.sel{stroke:#F4EFE3;stroke-width:3;stroke-opacity:1;transform:scale(1.045);animation:pu 2.6s ease-in-out infinite}
+@keyframes pu{50%{stroke-opacity:.35}}
+#gB rect{transition:opacity 1.4s}
+.shd{animation:shd 60s ease-in-out infinite alternate}@keyframes shd{from{transform:translate(-260px,0)}to{transform:translate(360px,60px)}}
+.pan{position:absolute;background:var(--s);padding:18px 22px 16px;width:250px;box-shadow:0 20px 50px -20px rgba(0,0,0,.6);transition:left .6s,top .6s,right .6s,opacity .5s;opacity:0;pointer-events:none}
+.pan.on{opacity:1}
+.pan .big{font-size:72px;line-height:.95;margin:4px 0 2px}.pan .big small{font-size:18px;letter-spacing:0;margin-left:4px}
+.pan .rk{margin-top:12px;color:var(--t);font-size:11px;letter-spacing:.14em;border-top:1px solid #d9d2bf;padding-top:10px}
+.pan .hand{font-size:13px;margin-top:6px;line-height:1.3}
+.pan .rd{display:grid;grid-template-columns:1fr 1fr;gap:2px 14px;margin-top:12px;font-size:13px}
+.pan .rd span{color:var(--m);font-size:10px;letter-spacing:.08em;text-transform:uppercase;display:block}
+#ha{position:absolute;left:22px;bottom:18px;font-size:clamp(13px,1.6vw,18px);color:var(--s);max-width:280px;transition:opacity .6s}
+.lg{position:absolute;right:16px;top:14px;color:var(--s);text-align:right}
+.lg i{display:block;width:120px;height:5px;margin-top:4px;background:linear-gradient(90deg,rgba(200,117,77,.08),#C8754D);margin-left:auto}
+/* scrubber */
+.sc{margin-top:22px;display:flex;gap:22px;align-items:center}
+.sc button{border:1px solid var(--g);background:none;color:var(--g);font:inherit;font-size:10px;letter-spacing:.16em;padding:10px 16px;cursor:pointer;border-radius:99px;text-transform:uppercase}
+.sc .rw{flex:1}
+input[type=range]{-webkit-appearance:none;appearance:none;width:100%;background:none;height:26px;margin:0}
+input[type=range]::-webkit-slider-runnable-track{height:1px;background:var(--g)}
+input[type=range]::-moz-range-track{height:1px;background:var(--g)}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;height:18px;border-radius:50%;background:var(--t);margin-top:-9px;border:3px solid var(--w);box-shadow:0 0 0 1px var(--t)}
+input[type=range]::-moz-range-thumb{width:12px;height:12px;border-radius:50%;background:var(--t);border:3px solid var(--w)}
+.tk{display:flex;justify-content:space-between}
+.hh{font-size:38px;min-width:110px;text-align:right}
+/* layers control */
+.lyc{display:flex;flex-wrap:wrap;gap:0;margin-top:16px;border-top:1px solid #e6e0d0}
+.lyc button{border:0;border-right:1px solid #e6e0d0;background:none;color:var(--g);font:inherit;font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;padding:12px 18px;cursor:pointer;opacity:.4;transition:.3s}
+.lyc button.on{opacity:1;color:var(--t)}
+/* before/after */
+.ba{margin-top:130px;padding-bottom:100px}
+.baw{position:relative;margin-top:40px;background:#183B36;border-radius:2px;overflow:hidden}
+#bamap{display:block;width:100%;height:auto}
+.baclip{transition:clip-path 2s cubic-bezier(.65,0,.35,1)}
+.bal{display:flex;justify-content:space-between;margin-top:14px}
+.bal .side{max-width:280px}
+.bal .side.r{text-align:right;margin-left:auto}
+.bal .k{font-size:34px;margin:2px 0}
+.slidebtn{display:block;margin:24px auto 0;border:1px solid var(--g);background:none;color:var(--g);font:inherit;font-size:11px;letter-spacing:.14em;text-transform:uppercase;padding:12px 28px;border-radius:99px;cursor:pointer;transition:.3s}
+.slidebtn:hover{background:var(--g);color:var(--s)}
+footer{padding:70px 0 40px;display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px}
+@media(max-width:860px){.mseg{margin-left:0}.ctl{gap:20px}.pan{position:static;width:auto;opacity:1!important;box-shadow:none;margin-top:16px}.mb{overflow:visible}.sc{flex-wrap:wrap}.bal .side.r{text-align:left;margin-left:0}nav .links{gap:16px;flex-wrap:wrap}}
+@media(prefers-reduced-motion:reduce){*{animation:none!important}}
+</style><link rel="stylesheet" href="assets/fx.css"></head><body>
+
+<nav class="wr"><b class="se">Panchayat Weather Intelligence</b>
+<div class="links"><a href="index.html">Home</a><a class="on" href="forecast-atlas.html">Forecast Atlas</a><a href="agro-advisory.html">Advisory</a><a href="validation.html">Validation</a><a href="data-model.html">Data &amp; Model</a><a href="about.html">About</a></div>
+</nav>
+
+<header class="top"><div class="wr">
+<span class="mt">Forecast Atlas</span>
+<h1 class="se">Forecast Atlas</h1>
+<p class="sub">See how weather changes from block scale to Panchayat scale.</p>
+</div></header>
+
+<section><div class="wr">
+<div class="ctl">
+<div class="tg"><button id="bC" class="on"><span class="n">Coarse</span><span class="mt">12 km</span></button><button id="bF"><span class="n">Downscaled</span><span class="mt">1–3 km</span></button></div>
+<div class="mseg" id="mseg">
+<button data-m="rain" class="on">Rain</button><button data-m="temp">Temperature</button><button data-m="wind">Wind</button><button data-m="risk">Rainfall risk</button>
+</div>
+</div>
+
+<div class="mb" id="mb"><div id="cvw" style="position:relative"><svg id="map" viewBox="0 0 900 560"></svg><canvas id="cv"></canvas></div>
+<div class="lg mt" style="color:#F4EFE3" id="lgl">Rain intensity<i></i></div>
+<div class="hand" id="ha"></div>
+<div class="pan" id="pan"></div></div>
+
+<div class="sc"><button id="pb">Play the day</button><div class="rw"><input id="rg" type="range" min="0" max="24" step=".1" value="0" aria-label="Forecast hour"><div class="tk mt"><span>Now</span><span>06:00</span><span>12:00</span><span>18:00</span><span>00:00</span></div></div><div class="hh se" id="hh">NOW</div></div>
+
+<div class="lyc" id="lyc">
+<button class="on" data-l="forecast">Forecast</button><button data-l="terrain">Terrain</button><button data-l="cover">Land Cover</button><button data-l="ndvi">NDVI</button><button data-l="hist">Historical Weather</button><button data-l="obs">Observations</button>
+</div>
+</div></section>
+
+<section class="ba"><div class="wr">
+<span class="mt">Before / after</span>
+<h1 class="se" style="font-size:clamp(30px,4.6vw,56px)">One grid square is not one village.</h1>
+<div class="baw"><svg id="bamap" viewBox="0 0 900 460"></svg></div>
+<div class="bal">
+<div class="side"><span class="mt">Before</span><div class="k se">Coarse forecast</div><span class="mt">12 km · less local variation</span></div>
+<div class="side r"><span class="mt">After</span><div class="k se" style="color:var(--t)">Downscaled forecast</div><span class="mt">1–3 km · Panchayat-level variation</span></div>
+</div>
+<button class="slidebtn mt" id="baB">Reveal the downscaling ↴</button>
+</div></section>
+
+<footer class="wr"><span class="mt">Panchayat Weather Intelligence · SIH26074</span><span class="mt">Prototype · simulated data</span></footer>
+
+<script>
+const $=s=>document.querySelector(s),NS="http://www.w3.org/2000/svg",W=900,H=560,NC=8,NR=6,SD="#F4EFE3";
+const hs=s=>{let h=2166136261;for(let i=0;i<s.length;i++){h^=s.charCodeAt(i);h=Math.imul(h,16777619)}return()=>{h=Math.imul(h^h>>>15,2246822519);h^=h>>>13;return(h>>>0)/4294967296}};
+const V=[];for(let r=0;r<=NR;r++){V[r]=[];for(let c=0;c<=NC;c++){const q=hs(r+"v"+c);V[r][c]=[c*W/NC+(q()-.5)*30,r*H/NR+(q()-.5)*28]}}
+function edge(p,q){const f=p[0]<q[0]||p[0]==q[0]&&p[1]<q[1],a=f?p:q,b=f?q:p,r=hs(a+""+b),dx=b[0]-a[0],dy=b[1]-a[1],L=Math.hypot(dx,dy),o=[];for(let i=1;i<5;i++){const t=i/5,d=(r()-.5)*L*.24;o.push([a[0]+dx*t-dy/L*d,a[1]+dy*t+dx/L*d])}return f?o:o.reverse()}
+const cells=[],blocks={};let cn=0;
+const g1=(x,y,a,b,s)=>Math.exp(-((x-a)**2+(y-b)**2)/(2*s*s));
+for(let r=0;r<NR;r++)for(let c=0;c<NC;c++){
+const p=[V[r][c],V[r][c+1],V[r+1][c+1],V[r+1][c]],pts=[p[0],...edge(p[0],p[1]),p[1],...edge(p[1],p[2]),p[2],...edge(p[2],p[3]),p[3],...edge(p[3],p[0])];
+const cx=p.reduce((a,q)=>a+q[0],0)/4,cy=p.reduce((a,q)=>a+q[1],0)/4,q=hs("c"+r+c),nz=q();
+if(((cx-450)/385)**2+((cy-282)/235)**2>1+(nz-.5)*.35)continue;
+const rain=Math.max(4,9+38*g1(cx,cy,300,215,150)+30*g1(cx,cy,620,380,130)+(q()-.5)*10),elev=150+300*(.5+.5*Math.sin(cx/130)*Math.cos(cy/110))+q()*40;
+const b=(r>>1)*4+(c>>1);
+const o={id:cells.length,n:++cn,r,c,pts,cx,cy,rain,elev,ndvi:.25+.55*(.5+.5*Math.sin(cy/90+cx/200))*(.7+q()*.3),temp:34-elev/62+q()*1.2,wind:7+q()*10,hum:52+rain*.55+q()*5,ang:q()*180,bi:b};
+o.d="M"+pts.map(z=>z[0].toFixed(1)+" "+z[1].toFixed(1)).join("L")+"Z";cells.push(o);(blocks[b]=blocks[b]||{id:b,m:[]}).m.push(o)}
+const bl=Object.values(blocks);bl.forEach((b,i)=>{b.i=i;["rain","temp","wind","hum","cx","cy"].forEach(k=>b[k]=b.m.reduce((a,x)=>a+x[k],0)/b.m.length);b.bx=b.id%4;b.by=b.id>>2;b.m.forEach(x=>x.b=b)});
+const wt=(o,h)=>.15+Math.exp(-Math.pow(((o.cx+o.cy*.35)-(-160+h/24*1300))/150,2));
+[...cells,...bl].forEach(o=>{o.sw=0;for(let k=0;k<24;k++)o.sw+=wt(o,k+.5)});
+const inst=(o,h)=>o.rain*wt(o,h)/o.sw;
+const lab=h=>h<.3?"NOW":["00:00","01:00","02:00","03:00","04:00","05:00","06:00","07:00","08:00","09:00","10:00","11:00","12:00","13:00","14:00","15:00","16:00","17:00","18:00","19:00","20:00","21:00","22:00","23:00","00:00"][Math.round(h)];
+const lvl=r=>r<10?["Low",0]:r<25?["Mild",1]:r<50?["Moderate",2]:["High",3];
+const riskCol=v=>["#7d9c8f","#C8B26A","#C8754D","#8a3a1f"][lvl(v)[1]];
+let metric="rain";
+function mval(o,h){if(metric=="rain")return inst(o,h);if(metric=="temp")return o.temp-h*0+((h-12)/12)*-1.4+1.4;if(metric=="wind")return o.wind*(.7+.3*Math.sin(h/24*6.28));return inst(o,h)}
+function mcol(o,h){const v=mval(o,h);
+if(metric=="rain")return `rgba(200,117,77,${(.06+.84*Math.min(1,v/4.6)).toFixed(2)})`;
+if(metric=="temp"){const t=Math.min(1,Math.max(0,(v-26)/10));return `rgba(200,117,77,${(.1+t*.75).toFixed(2)})`}
+if(metric=="wind"){const t=Math.min(1,v/18);return `rgba(157,183,176,${(.15+t*.7).toFixed(2)})`}
+return riskCol(inst(o,h))+"cc"}
+const map=$("#map");let df="";
+cells.forEach(c=>{const t=c.ndvi>.6?"#3f6045":c.ndvi>.42?"#7b8a5a":"#a8996a";df+=`<pattern id="p${c.id}" width="10" height="10" patternUnits="userSpaceOnUse" patternTransform="rotate(${c.ang})"><rect width="10" height="10" fill="${t}"/><rect width="10" height="4" fill="#000" opacity=".1"/><rect y="7" width="10" height="1" fill="#F4EFE3" opacity=".12"/></pattern>`});
+let sc="";const rq=hs("sat");for(let i=0;i<70;i++){const x=rq()*W,y=rq()*H,w=30+rq()*70,h=20+rq()*50;sc+=`<rect x="${x}" y="${y}" width="${w}" height="${h}" fill="${["#5d7a50","#3a5a44","#8a8f5f","#a99b6b","#2f5040"][i%5]}" opacity=".55" transform="rotate(${rq()*60-30} ${x} ${y})"/>`}
+map.innerHTML=`<defs>${df}<filter id="nz"><feTurbulence type="fractalNoise" baseFrequency=".011" numOctaves="4" seed="4"/><feColorMatrix values="0 0 0 0 .96 0 0 0 0 .94 0 0 0 0 .89 0 0 0 .55 -.18"/></filter><filter id="bb"><feGaussianBlur stdDeviation="16"/></filter><clipPath id="cl">${cells.map(c=>`<path d="${c.d}"/>`).join("")}</clipPath></defs>
+<rect width="${W}" height="${H}" fill="#264a3d"/><g id="satL">${sc}</g><rect width="${W}" height="${H}" filter="url(#nz)" opacity=".5" id="nzL"/>
+<path d="M-20 90C120 130 200 40 330 80S560 20 700 90 860 40 930 60" fill="none" stroke="#9db7b0" stroke-opacity=".5" stroke-width="5"/><path d="M60 560C110 470 40 400 90 320S60 180 130 130" fill="none" stroke="#9db7b0" stroke-opacity=".45" stroke-width="4"/><ellipse cx="820" cy="470" rx="34" ry="16" fill="#9db7b0" opacity=".45"/>
+<g id="gCon" opacity="0"></g><g id="gV" pointer-events="none" opacity="0"></g><g id="gObs" pointer-events="none" opacity="0"></g>
+<g id="gF"></g><g id="gO"></g><g clip-path="url(#cl)" id="gB" pointer-events="none"></g><g id="gS" clip-path="url(#cl)" pointer-events="none"><rect id="bs" fill="none" stroke="${SD}" stroke-width="5" opacity="0"/></g>
+<g class="shd" filter="url(#bb)" opacity=".28" pointer-events="none"><ellipse cx="200" cy="200" rx="150" ry="80" fill="#0b1f1b"/><ellipse cx="520" cy="420" rx="200" ry="70" fill="#0b1f1b"/></g>`;
+const mk=(t,a)=>{const e=document.createElementNS(NS,t);for(const k in a)e.setAttribute(k,a[k]);return e};
+const gF=$("#gF"),gO=$("#gO"),gV=$("#gV"),gB=$("#gB"),gCon=$("#gCon"),gObs=$("#gObs");
+const vr=hs("vil");
+cells.forEach(c=>{gF.append(mk("path",{d:c.d,fill:`url(#p${c.id})`}));
+const e=mk("path",{d:c.d,class:"cell"});e.onclick=()=>pick(c);c.el=e;gO.append(e);
+for(let i=0;i<3;i++)gV.append(mk("rect",{x:c.cx+(vr()-.5)*30,y:c.cy+(vr()-.5)*24,width:3,height:2.4,fill:SD,opacity:.8}))});
+for(let k=1;k<=5;k++)gCon.append(mk("path",{d:`M${20} ${40*k}Q${300} ${40*k-30+k*8} ${600} ${40*k-10}T${880} ${40*k}`,fill:"none",stroke:SD,"stroke-width":1.2,opacity:.5}));
+for(let k=0;k<14;k++){const q=hs("obs"+k);gObs.append(mk("circle",{cx:q()*W,cy:q()*H,r:4,fill:"none",stroke:SD,"stroke-width":1.4}))}
+bl.forEach((b,i)=>{const r=mk("rect",{x:b.bx*2*W/NC,y:b.by*2*H/NR,width:2*W/NC,height:2*H/NR,fill:"none",stroke:SD,"stroke-width":4,"stroke-opacity":.9});r.style.transitionDelay=i*90+"ms";b.rect=r;gB.append(r)});
+let fine=false,hr=0,sel=null,timer=null;
+function paint(){cells.forEach(c=>c.el.style.fill=mcol(fine?c:c.b,hr));$("#hh").textContent=lab(hr)}
+function num(el,v,d){const f=+el.dataset.v||0,t0=performance.now();el.dataset.v=v;el._t=t0;(function s(t){if(el._t!==t0)return;const k=Math.min(1,(t-t0)/700),e=1-Math.pow(1-k,3);el.textContent=(f+(v-f)*e).toFixed(d);if(k<1)requestAnimationFrame(s)})(t0)}
+$("#pan").innerHTML=`<div class="mt" id="pt"></div><div class="big se"><span id="n1">0</span><small class="mt" id="u1">mm</small></div><div class="mt" id="cap"></div><div class="rd"><div><span>Wind</span><span id="n3">0</span></div><div><span>Humidity</span><span id="n4">0</span></div></div><div class="rk mt" id="rk"></div><div class="hand" id="pn"></div>`;
+function unitFor(){return metric=="rain"?"mm · next 24h":metric=="temp"?"°C":metric=="wind"?"km/h":"risk index"}
+function upd(){if(!sel)return;const o=fine?sel:sel.b,L=lvl(o.rain);
+$("#pt").textContent=fine?"Panchayat "+String(sel.n).padStart(2,"0"):"Coarse cell "+(o.i+1)+" · "+o.m.length+" Panchayats";
+const mv=mval(o,hr);
+num($("#n1"),metric=="rain"?o.rain:metric=="temp"?o.temp:metric=="wind"?o.wind:lvl(o.rain)[1]+1,metric=="risk"?0:1);
+$("#u1").textContent=metric=="rain"?"mm · next 24h":metric=="temp"?"°C":metric=="wind"?"km/h avg":"of 4";
+$("#cap").textContent=metric=="rain"?"Rainfall":metric=="temp"?"Temperature":metric=="wind"?"Wind speed":"Rainfall risk level";
+num($("#n3"),o.wind,0);$("#n3").nextElementSibling;$("#n3").textContent=Math.round(o.wind)+" km/h";
+$("#n4").textContent=Math.round(o.hum)+"%";
+$("#rk").textContent=L[0]+" rainfall risk";
+let pk=0,pv=0;for(let h=0;h<=24;h+=.5){const v=inst(o,h);if(v>pv){pv=v;pk=h}}let e=24;for(let h=pk;h<=24;h+=.5)if(inst(o,h)<.45*pv){e=h;break}
+$("#pn").textContent="Rain peaks near "+lab(Math.round(pk))+", clears by "+lab(Math.round(e))+"."}
+function place(){const p=$("#pan");if(!sel)return;p.classList.add("on");const x=sel.cx/W*100,y=Math.max(3,Math.min(48,sel.cy/H*100-16));p.style.top=y+"%";if(x>52){p.style.left="auto";p.style.right=(103-x)+"%"}else{p.style.right="auto";p.style.left=(x+4)+"%"}}
+function pick(c){sel=c;cells.forEach(k=>k.el.classList.toggle("sel",k===c&&fine));gO.append(c.el);const b=c.b,r=$("#bs");r.setAttribute("x",b.bx*2*W/NC);r.setAttribute("y",b.by*2*H/NR);r.setAttribute("width",2*W/NC);r.setAttribute("height",2*H/NR);r.setAttribute("opacity",fine?0:1);upd();place()}
+function setF(f){if(f===fine)return;fine=f;const mb=$("#mb");mb.classList.add("slow");cells.forEach(c=>c.el.style.transitionDelay=f?(c.bi*70+Math.random()*350)+"ms":"0ms");
+map.classList.toggle("fine",f);bl.forEach(b=>b.rect.style.opacity=f?0:1);
+$("#bC").classList.toggle("on",!f);$("#bF").classList.toggle("on",f);$("#bs").setAttribute("opacity",f?0:1);
+cells.forEach(k=>k.el.classList.toggle("sel",k===sel&&f));paint();upd();
+$("#ha").style.opacity=0;setTimeout(()=>{$("#ha").textContent=f?"Same field, redistributed — every Panchayat gets its own value.":"One number for ~12 km. Every Panchayat inside it looks the same.";$("#ha").style.opacity=1},900);
+setTimeout(()=>{mb.classList.remove("slow");cells.forEach(c=>c.el.style.transitionDelay="")},3200)}
+$("#bC").onclick=()=>setF(false);$("#bF").onclick=()=>setF(true);
+$("#rg").oninput=e=>{hr=+e.target.value;paint();upd()};
+$("#pb").onclick=()=>{if(timer){clearInterval(timer);timer=null;$("#pb").textContent="Play the day";return}$("#pb").textContent="Pause";if(hr>=24)hr=0;timer=setInterval(()=>{hr+=.08;if(hr>=24){hr=24;clearInterval(timer);timer=null;$("#pb").textContent="Play the day"}$("#rg").value=hr;paint();upd()},50)};
+$("#mseg").addEventListener("click",e=>{const b=e.target.closest("button");if(!b)return;[...$("#mseg").children].forEach(x=>x.classList.toggle("on",x===b));metric=b.dataset.m;
+$("#lgl").innerHTML=(metric=="rain"?"Rain intensity":metric=="temp"?"Temperature":metric=="wind"?"Wind speed":"Rainfall risk")+"<i></i>";paint();upd()});
+const LYset={forecast:1,terrain:0,cover:1,ndvi:0,hist:0,obs:0};
+function layers(){$("#satL").style.opacity=LYset.cover?1:.15;$("#gF").style.opacity=LYset.cover?1:.25;gCon.setAttribute("opacity",LYset.terrain?.9:0);gObs.setAttribute("opacity",LYset.obs?.9:0);gV.setAttribute("opacity",LYset.ndvi?.9:0);gO.style.opacity=LYset.forecast?1:.12}
+$("#lyc").addEventListener("click",e=>{const b=e.target.closest("button");if(!b)return;const k=b.dataset.l;LYset[k]=LYset[k]?0:1;b.classList.toggle("on",!!LYset[k]);layers()});
+// particles
+const cv=$("#cv"),cx2=cv.getContext("2d");let sx=1;
+function rs(){const d=devicePixelRatio||1,r=map.getBoundingClientRect();cv.width=r.width*d;cv.height=r.height*d;sx=cv.width/W}rs();addEventListener("resize",rs);
+const cellAt=(x,y)=>{let best=null,bd=1e9;for(const c of cells){const dd=(c.cx-x)**2+(c.cy-y)**2;if(dd<bd){bd=dd;best=c}}return bd<2800?best:null};
+const loc=(x,y)=>{const c=cellAt(x,y);return c?inst(fine?c:c.b,hr):0};
+const dr=Array.from({length:320},()=>({l:0})),wd=Array.from({length:70},()=>({t:[],l:0}));let T=0;
+function fr(){T+=.016;cx2.setTransform(1,0,0,1,0,0);cx2.clearRect(0,0,cv.width,cv.height);cx2.scale(sx,sx);
+if(metric=="rain"||metric=="risk"){cx2.strokeStyle="rgba(244,239,227,.6)";cx2.lineWidth=.9;cx2.beginPath();
+for(const d of dr){if(d.l<=0){d.x=Math.random()*W;d.y=Math.random()*H;d.l=8+Math.random()*10;d.on=Math.random()<Math.min(1,loc(d.x,d.y)/3.2)}
+d.l--;d.x-=1.6;d.y+=7;if(d.on){cx2.moveTo(d.x,d.y);cx2.lineTo(d.x+2,d.y-8)}}cx2.stroke()}
+cx2.lineWidth=1;for(const w of wd){if(w.l<=0){w.x=Math.random()*W;w.y=Math.random()*H;w.t=[];w.l=60+Math.random()*80}
+w.l--;const a=.5+Math.sin(w.x/140+T*.3)*.5+Math.cos(w.y/110)*.4,c=cellAt(w.x,w.y),spd=c?(c.wind/12)*1.6:.5;w.x+=Math.cos(a)*spd;w.y+=Math.sin(a)*spd*.7;w.t.push([w.x,w.y]);if(w.t.length>18)w.t.shift();
+if(c){cx2.strokeStyle=`rgba(244,239,227,${Math.min(.3,w.l/220)})`;cx2.beginPath();w.t.forEach((p,i)=>i?cx2.lineTo(p[0],p[1]):cx2.moveTo(p[0],p[1]));cx2.stroke()}}
+requestAnimationFrame(fr)}fr();
+paint();layers();$("#ha").textContent="One number for ~12 km. Every Panchayat inside it looks the same.";
+pick(cells.reduce((a,c)=>Math.abs(c.rain-42)<Math.abs(a.rain-42)?c:a));
+
+// before/after mini map
+const bam=$("#bamap");let bdf="";cells.forEach(c=>{bdf+=`<use href="#bp${c.id}"/>`});
+bam.innerHTML=`<defs>${df.replace(/id="p/g,'id="bp')}<clipPath id="bcl">${cells.map(c=>`<path d="${c.d}"/>`).join("")}</clipPath></defs>
+<rect width="${W}" height="${H*460/560}" fill="#264a3d"/>
+<g id="baCoarse">${bl.map(b=>{const v=b.rain;return `<rect x="${b.bx*2*W/NC}" y="${b.by*2*H/NR*(460/560)}" width="${2*W/NC}" height="${2*H/NR*(460/560)}" fill="rgba(200,117,77,${(.1+.7*Math.min(1,v/60)).toFixed(2)})" stroke="#F4EFE3" stroke-width="2"/>`}).join("")}</g>
+<g id="baFine" clip-path="url(#bcl)" class="baclip" style="clip-path:inset(0 100% 0 0)">${cells.map(c=>`<path d="${c.d}" fill="rgba(200,117,77,${(.06+.84*Math.min(1,c.rain/70)).toFixed(2)})" stroke="#F4EFE3" stroke-width="1" stroke-opacity=".7"/>`).join("")}</g>
+<line id="baLine" x1="0" y1="0" x2="0" y2="${H*460/560}" stroke="#F4EFE3" stroke-width="3"/>`;
+let baOn=false;
+$("#baB").onclick=()=>{baOn=!baOn;const f=$("#baFine"),l=$("#baLine");f.style.clipPath=baOn?"inset(0 0 0 0)":"inset(0 100% 0 0)";l.style.transition="x1 2s cubic-bezier(.65,0,.35,1),x2 2s cubic-bezier(.65,0,.35,1)";l.setAttribute("x1",baOn?W:0);l.setAttribute("x2",baOn?W:0);$("#baB").textContent=baOn?"Back to coarse ↺":"Reveal the downscaling ↴"};
+</script><script src="assets/fx.js"></script></body></html>

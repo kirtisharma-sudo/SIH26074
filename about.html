@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>About · Panchayat Weather Intelligence</title>
+<style>
+:root{--g:#183B36;--s:#F4EFE3;--t:#C8754D;--w:#FFFDF8;--m:#6f6e66;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);color-scheme:light}
+html{scroll-behavior:smooth}*{box-sizing:border-box}
+body{margin:0;background:var(--w);color:var(--g);font:14px/1.55 Inter,system-ui,-apple-system,"Segoe UI",sans-serif}
+.se{font-family:"Bookman Old Style",Bookman,Georgia,serif;font-weight:400;letter-spacing:-.025em}
+.mt{font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--m)}
+.wr{max-width:1240px;margin:0 auto;padding:0 28px}
+nav{display:flex;justify-content:space-between;align-items:center;padding:26px 0;border-bottom:1px solid #e6e0d0}
+nav b{font-size:19px}
+nav .links{display:flex;gap:26px;align-items:center;flex-wrap:wrap}
+nav a{color:var(--g);text-decoration:none;font-size:12.5px;letter-spacing:.06em;padding-bottom:3px;opacity:.6;transition:.3s}
+nav a.on,nav a:hover{opacity:1;border-bottom:1px solid var(--t)}
+/* opening */
+.open{padding:120px 0 90px;text-align:center}
+.open h1{font-size:clamp(30px,4.8vw,58px);line-height:1.28;max-width:16em;margin:0 auto}
+.open h1 em{color:var(--t);font-style:italic}
+section{padding-top:110px}
+h2{font-size:clamp(26px,3.6vw,44px);line-height:1.05;margin:6px 0 0}
+/* cascade */
+.cascade{margin-top:60px;display:flex;flex-direction:column;align-items:center;gap:0}
+.cnode{text-align:center;padding:20px 0}
+.cnode .big{font-size:clamp(22px,3vw,32px)}
+.cnode .cap{color:var(--m);font-size:13px;margin-top:4px;max-width:26em}
+.carrow{color:var(--t);font-size:20px;line-height:1}
+.factors{display:flex;flex-wrap:wrap;justify-content:center;gap:28px;margin:14px 0 6px;max-width:760px}
+.factors span{font-size:13px;color:var(--g);border-bottom:1px solid #d9d2bf;padding-bottom:4px}
+/* illustration */
+.illwrap{margin-top:70px;background:var(--g);border-radius:2px;overflow:hidden}
+#ill{display:block;width:100%;height:auto}
+.zone{transition:filter .4s}
+.illcap{padding:18px 28px;color:var(--s);display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px}
+/* triptych */
+.trip{display:grid;grid-template-columns:repeat(3,1fr);gap:0;margin-top:90px;border-top:1px solid var(--g);border-bottom:1px solid var(--g)}
+.tc{padding:34px 26px 34px 0;border-right:1px solid #d9d2bf;position:relative}
+.tc:last-child{border-right:0}
+.tc .n{font-size:11px;color:var(--t);letter-spacing:.14em}
+.tc h3{font-size:26px;margin:10px 0 10px}
+.tc p{font-size:13.5px;color:var(--m);margin:0;max-width:24em}
+/* final statement */
+.final{background:var(--g);color:var(--s);margin-top:130px;padding:140px 0;text-align:center}
+.final p{font-size:clamp(30px,5.4vw,62px);line-height:1.28;margin:0}
+.final em{color:var(--t);font-style:italic}
+footer{padding:60px 0 40px;display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px;background:var(--g)}
+footer span{color:#9db1ab}
+@media(max-width:860px){.trip{grid-template-columns:1fr}.tc{border-right:0;border-bottom:1px solid #d9d2bf}}
+</style><link rel="stylesheet" href="assets/fx.css"></head><body>
+
+<nav class="wr"><b class="se">Panchayat Weather Intelligence</b>
+<div class="links"><a href="index.html">Home</a><a href="forecast-atlas.html">Forecast Atlas</a><a href="agro-advisory.html">Advisory</a><a href="validation.html">Validation</a><a href="data-model.html">Data &amp; Model</a><a class="on" href="about.html">About</a></div>
+</nav>
+
+<header class="open wr">
+<span class="mt">The problem, plainly</span>
+<h1 class="se">A forecast can be accurate at 12 km<br>and still <em>miss what happens</em> in a Panchayat.</h1>
+</header>
+
+<section><div class="wr">
+<span class="mt">From a region to a village</span>
+<h2 class="se">Why one number is never enough.</h2>
+<div class="cascade">
+<div class="cnode"><div class="big se">Block-level forecast</div><div class="cap">A single coarse region, ~12 km across — one rainfall number for everyone inside it.</div></div>
+<div class="carrow">↓</div>
+<div class="cnode"><div class="big se">Local variation</div><div class="factors"><span>Elevation</span><span>Vegetation</span><span>Land cover</span><span>Rainfall patterns</span><span>Historical weather</span></div></div>
+<div class="carrow">↓</div>
+<div class="cnode"><div class="big se" style="color:var(--t)">Panchayat-level weather</div><div class="cap">The same storm, resolved into what it actually means for each Panchayat inside that region.</div></div>
+<div class="carrow">↓</div>
+<div class="cnode"><div class="big se">Better local decisions</div><div class="cap">Irrigation, spraying and field work timed to conditions on the actual ground, not the regional average.</div></div>
+</div>
+</div></section>
+
+<section><div class="wr">
+<span class="mt">The same field, in pieces</span>
+<h2 class="se">Micro-weather, mapped.</h2>
+<div class="illwrap"><svg id="ill" viewBox="0 0 1200 520"></svg>
+<div class="illcap"><span class="mt" style="color:#9db1ab">One agricultural belt, several micro-climates</span><span class="mt" style="color:#9db1ab" id="illtip">Hover a zone</span></div></div>
+</div></section>
+
+<section><div class="wr">
+<span class="mt">In three parts</span>
+<h2 class="se">The problem, the idea, the outcome.</h2>
+<div class="trip">
+<div class="tc"><span class="n">THE PROBLEM</span><h3 class="se">Coarse spatial resolution</h3><p>Operational weather forecasts are built for large grid cells, not for the boundary of a single Panchayat.</p></div>
+<div class="tc"><span class="n">THE IDEA</span><h3 class="se">AI-powered spatial downscaling</h3><p>Terrain, land cover, vegetation, history and ground observations refine that coarse forecast into a local one.</p></div>
+<div class="tc"><span class="n">THE OUTCOME</span><h3 class="se">Actionable Panchayat-level intelligence</h3><p>A forecast specific enough to change what a farmer does today, not just what a district expects this week.</p></div>
+</div>
+</div></section>
+
+<div class="final wr" style="max-width:none"><div class="wr"><p class="se">From coarse data<br>to <em>local understanding</em><br>to better decisions.</p></div></div>
+<footer class="wr"><span class="mt">Panchayat Weather Intelligence · SIH26074</span><span class="mt">Prototype · simulated data</span></footer>
+
+<script>
+const $=s=>document.querySelector(s),NS="http://www.w3.org/2000/svg";
+const hs=s=>{let h=2166136261;for(let i=0;i<s.length;i++){h^=s.charCodeAt(i);h=Math.imul(h,16777619)}return()=>{h=Math.imul(h^h>>>15,2246822519);h^=h>>>13;return(h>>>0)/4294967296}};
+// editorial illustration: one coarse block subdivided into distinct micro-zones
+const W=1200,H=520,NC=6,NR=3;
+const ZONES=[["Upland, drier","#a8996a"],["Riverine, wetter","#3f6045"],["Mixed cropland","#7b8a5a"],["Forest fringe","#2f5040"],["Lowland paddy","#5d7a45"],["Fallow / settlement","#8a7a55"]];
+const V=[];for(let r=0;r<=NR;r++){V[r]=[];for(let c=0;c<=NC;c++){const q=hs(r+"av"+c);V[r][c]=[c*W/NC+(q()-.5)*40,r*H/NR+(q()-.5)*36]}}
+function edge(p,pp){const f=p[0]<pp[0]||p[0]==pp[0]&&p[1]<pp[1],a=f?p:pp,b=f?pp:p,r=hs(a+""+b),dx=b[0]-a[0],dy=b[1]-a[1],L=Math.hypot(dx,dy),o=[];for(let i=1;i<5;i++){const t=i/5,d=(r()-.5)*L*.22;o.push([a[0]+dx*t-dy/L*d,a[1]+dy*t+dx/L*d])}return f?o:o.reverse()}
+let g="",defs="";const zq=hs("zone");
+for(let r=0;r<NR;r++)for(let c=0;c<NC;c++){
+const p=[V[r][c],V[r][c+1],V[r+1][c+1],V[r+1][c]],pts=[p[0],...edge(p[0],p[1]),p[1],...edge(p[1],p[2]),p[2],...edge(p[2],p[3]),p[3],...edge(p[3],p[0])];
+const d="M"+pts.map(z=>z[0].toFixed(1)+" "+z[1].toFixed(1)).join("L")+"Z";
+const cx=p.reduce((a,z)=>a+z[0],0)/4,cy=p.reduce((a,z)=>a+z[1],0)/4,zi=Math.floor(zq()*ZONES.length),z=ZONES[zi],id="z"+r+"_"+c,ang=zq()*180;
+defs+=`<pattern id="p${id}" width="11" height="11" patternUnits="userSpaceOnUse" patternTransform="rotate(${ang})"><rect width="11" height="11" fill="${z[1]}"/><rect width="11" height="4" fill="#000" opacity=".12"/><rect y="7" width="11" height="1" fill="#F4EFE3" opacity=".14"/></pattern>`;
+g+=`<path d="${d}" class="zone" fill="url(#p${id})" data-name="${z[0]}" stroke="#F4EFE3" stroke-opacity=".5" stroke-width="1"><title>${z[0]}</title></path>`;
+g+=`<text x="${cx}" y="${cy}" text-anchor="middle" font-size="10" fill="#F4EFE3" opacity="0" pointer-events="none" font-family="Inter" letter-spacing="1" class="ztxt" data-name="${z[0]}"></text>`}
+// coarse boundary overlay + block label
+let bnd="";for(let x=0;x<=W;x+=W/2)bnd+=`<line x1="${x}" y1="0" x2="${x}" y2="${H}" stroke="#F4EFE3" stroke-width="3" opacity=".85"/>`;
+for(let y=0;y<=H;y+=H/1)bnd+="";
+$("#ill").innerHTML=`<defs>${defs}</defs><rect width="${W}" height="${H}" fill="#264a3d"/>${g}<line x1="${W/2}" y1="0" x2="${W/2}" y2="${H}" stroke="#F4EFE3" stroke-width="3" opacity=".8"/><line x1="0" y1="${H/2}" x2="${W}" y2="${H/2}" stroke="#F4EFE3" stroke-width="3" opacity=".8"/>
+<text x="24" y="34" fill="#F4EFE3" font-family="Bookman Old Style,Georgia,serif" font-size="20">One coarse cell</text><text x="24" y="52" fill="#c8d4cf" font-family="Inter" font-size="10" letter-spacing="1.5">SIX MICRO-CLIMATES INSIDE IT</text>`;
+$("#ill").querySelectorAll(".zone").forEach(z=>{
+z.addEventListener("mouseenter",()=>{$("#illtip").textContent=z.dataset.name;$("#ill").querySelectorAll(".zone").forEach(o=>o.style.filter=o===z?"brightness(1.25)":"brightness(.6)")});
+z.addEventListener("mouseleave",()=>{$("#illtip").textContent="Hover a zone";$("#ill").querySelectorAll(".zone").forEach(o=>o.style.filter="")})});
+</script><script src="assets/fx.js"></script></body></html>

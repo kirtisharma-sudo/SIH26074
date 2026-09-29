@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Agro-Advisory · Panchayat Weather Intelligence</title>
+<style>
+:root{--g:#183B36;--s:#F4EFE3;--t:#C8754D;--w:#FFFDF8;--m:#6f6e66;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);color-scheme:light}
+html{scroll-behavior:smooth}*{box-sizing:border-box}
+body{margin:0;background:var(--w);color:var(--g);font:14px/1.55 Inter,system-ui,-apple-system,"Segoe UI",sans-serif}
+.se{font-family:"Bookman Old Style",Bookman,Georgia,serif;font-weight:400;letter-spacing:-.025em}
+.mt{font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--m)}
+.hand{font-family:"Segoe Script","Bradley Hand","Snell Roundhand","Brush Script MT",cursive;font-style:italic;color:var(--t)}
+.wr{max-width:1240px;margin:0 auto;padding:0 28px}
+nav{display:flex;justify-content:space-between;align-items:center;padding:26px 0;border-bottom:1px solid #e6e0d0}
+nav b{font-size:19px}
+nav .links{display:flex;gap:30px;align-items:center;flex-wrap:wrap}
+nav a{color:var(--g);text-decoration:none;font-size:12.5px;letter-spacing:.06em;padding-bottom:3px;opacity:.6;transition:.3s}
+nav a.on,nav a:hover{opacity:1;border-bottom:1px solid var(--t)}
+header.top{padding:70px 0 0}
+h1{font-size:clamp(38px,6.6vw,88px);line-height:1.0;margin:8px 0 0;max-width:11em}
+.sub{max-width:460px;font-size:16px;color:#33423e;margin-top:18px}
+section{padding-top:80px}
+h2{font-size:clamp(26px,3.6vw,44px);line-height:1.05;margin:6px 0 0}
+/* selector */
+.sel{display:flex;flex-wrap:wrap;gap:0;margin-top:36px;border-top:1px solid var(--g);border-bottom:1px solid var(--g)}
+.selcol{flex:1 1 220px;padding:18px 26px 18px 0;border-right:1px solid #d9d2bf}
+.selcol:last-child{border-right:0}
+.selcol .mt{margin-bottom:10px}
+.opt{display:flex;flex-wrap:wrap;gap:8px 16px}
+.opt button{border:0;background:none;font:inherit;color:var(--g);opacity:.4;cursor:pointer;padding:2px 0;font-size:16px;font-family:"Bookman Old Style",Georgia,serif;transition:.3s;border-bottom:1px solid transparent}
+.opt button.on{opacity:1;border-color:var(--t);color:var(--t)}
+/* field note */
+.note{margin-top:56px;border:1px solid var(--g);padding:56px;position:relative}
+.note:before{content:"";position:absolute;top:10px;left:10px;right:10px;bottom:10px;border:1px solid #d9d2bf;pointer-events:none}
+.nhead{display:flex;justify-content:space-between;align-items:baseline;flex-wrap:wrap;gap:10px}
+.nhead .place{font-size:clamp(26px,3.6vw,40px)}
+.nrow{display:grid;grid-template-columns:1fr 1fr;gap:40px;margin-top:34px;align-items:end}
+.nrow .big{font-size:clamp(64px,9vw,120px);line-height:.9}
+.nrow .big small{font-size:22px;letter-spacing:0;margin-left:6px;color:var(--m);font-family:Inter}
+.riskline{margin-top:26px;display:flex;align-items:center;gap:14px}
+.riskdot{width:9px;height:9px;border-radius:50%;background:var(--t)}
+.risktxt{font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--t)}
+.reco{margin-top:30px;border-top:1px solid #d9d2bf;padding-top:26px}
+.reco p{font-size:clamp(19px,2.2vw,27px);font-family:"Bookman Old Style",Georgia,serif;max-width:26em;margin:8px 0 0;line-height:1.35}
+.ilb{display:inline-block;margin-top:14px;font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--m);border:1px solid #d9d2bf;padding:5px 10px;border-radius:99px}
+.why{background:none;border:0;color:var(--t);font:inherit;font-size:11px;letter-spacing:.12em;text-transform:uppercase;cursor:pointer;margin-top:20px;padding:0}
+.whybox{max-height:0;overflow:hidden;transition:max-height .6s ease}
+.whybox.on{max-height:280px}
+.chain{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-top:20px;padding-top:18px;border-top:1px solid #d9d2bf}
+.chain span{font-size:12px}
+.chain b{font-weight:600}
+.chain i{color:var(--t);font-style:normal;font-size:13px}
+/* 3-day */
+.days{display:grid;grid-template-columns:repeat(3,1fr);gap:0;margin-top:60px;border-top:1px solid var(--g)}
+.day{padding:22px 22px 22px 0;border-right:1px solid #d9d2bf}
+.day:last-child{border-right:0}
+.day .dn{font-size:20px}
+.day .dv{margin-top:14px;display:grid;grid-template-columns:1fr;gap:8px}
+.day .dv div{display:flex;justify-content:space-between;font-size:13px;border-bottom:1px dotted #d9d2bf;padding:5px 0}
+.day .dv span:last-child{font-family:"Bookman Old Style",Georgia,serif;font-size:16px}
+/* ground */
+.gnd{margin-top:110px}
+.grid4{display:grid;grid-template-columns:repeat(4,1fr);gap:0;margin-top:40px;border-top:1px solid var(--g)}
+.gc{padding:26px 22px 26px 0;border-right:1px solid #d9d2bf;min-height:180px;display:flex;flex-direction:column;justify-content:space-between}
+.gc:last-child{border-right:0}
+.gc h3{font-size:22px;margin:0}
+.gc p{font-size:13px;color:var(--m);margin:10px 0 0}
+.stat{margin-top:16px;font-size:11px;letter-spacing:.14em;text-transform:uppercase;display:flex;align-items:center;gap:8px}
+.stat i{width:7px;height:7px;border-radius:50%;display:inline-block;font-style:normal}
+.st-WAIT i{background:#8a3a1f}.st-WAIT{color:#8a3a1f}
+.st-PLAN i{background:var(--t)}.st-PLAN{color:var(--t)}
+.st-PROCEED i{background:#3f6045}.st-PROCEED{color:#3f6045}
+.st-MONITOR i{background:#8a8f5f}.st-MONITOR{color:#8a8f5f}
+.foot{margin:120px 0 0;padding:26px 0;border-top:1px solid #e6e0d0}
+footer{padding:40px 0 40px;display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px}
+@media(max-width:860px){.grid4{grid-template-columns:1fr 1fr}.gc{border-right:1px solid #d9d2bf}.gc:nth-child(2n){border-right:0}.days{grid-template-columns:1fr}.day{border-right:0;border-bottom:1px solid #d9d2bf}.nrow{grid-template-columns:1fr}}
+</style><link rel="stylesheet" href="assets/fx.css"></head><body>
+
+<nav class="wr"><b class="se">Panchayat Weather Intelligence</b>
+<div class="links"><a href="index.html">Home</a><a href="forecast-atlas.html">Forecast Atlas</a><a class="on" href="agro-advisory.html">Advisory</a><a href="validation.html">Validation</a><a href="data-model.html">Data &amp; Model</a><a href="about.html">About</a></div>
+</nav>
+
+<header class="top"><div class="wr">
+<span class="mt">Agro-advisory</span>
+<h1 class="se">From weather signals to field decisions.</h1>
+<p class="sub">Localized forecasts translated into practical agro-meteorological guidance.</p>
+<p class="hand" style="margin-top:14px;font-size:16px">Forecast is information. Action is the outcome.</p>
+</div></header>
+
+<section><div class="wr">
+<span class="mt">Build the advisory</span>
+<h2 class="se">Panchayat · Crop · Window</h2>
+<div class="sel">
+<div class="selcol"><div class="mt">01 · Panchayat</div><div class="opt" id="oPan"></div></div>
+<div class="selcol"><div class="mt">02 · Crop / farm activity</div><div class="opt" id="oCrop"></div></div>
+<div class="selcol"><div class="mt">03 · Forecast window</div><div class="opt" id="oWin"></div></div>
+</div>
+
+<div class="note">
+<div class="nhead"><div class="place se" id="nPlace">Chandipur</div><span class="mt" id="nWin">Next 24 hours</span></div>
+<div class="nrow">
+<div><div class="big se"><span id="nRain">42</span><small>mm expected rainfall</small></div></div>
+<div style="text-align:right"><div class="big se" id="nTemp" style="color:var(--t)">—</div></div>
+</div>
+<div class="riskline"><span class="riskdot" id="nDot"></span><span class="risktxt" id="nRisk">Moderate rainfall risk</span></div>
+<div class="reco"><span class="mt">Recommendation</span><p id="nReco">Consider delaying irrigation and spraying until the rainfall window passes.</p>
+<span class="ilb">Illustrative advisory · prototype rules, not agronomically validated</span></div>
+<button class="why" id="whyBtn">Why this advisory? ＋</button>
+<div class="whybox" id="whyBox"><div class="chain" id="chain"></div></div>
+</div>
+</div></section>
+
+<section><div class="wr">
+<span class="mt">3-day outlook</span>
+<h2 class="se">Today · Tomorrow · Day 3</h2>
+<div class="days" id="days"></div>
+</div></section>
+
+<section class="gnd"><div class="wr">
+<span class="mt">What this means on the ground</span>
+<h2 class="se">Four decisions, made simple.</h2>
+<div class="grid4" id="grid4"></div>
+<div class="foot"><span class="ilb">All recommendations on this page are illustrative prototype output for SIH26074 and are not validated agronomic advice.</span></div>
+</div></section>
+
+<footer class="wr"><span class="mt">Panchayat Weather Intelligence · SIH26074</span><span class="mt">Prototype · simulated data</span></footer>
+
+<script>
+const $=s=>document.querySelector(s);
+const PANS=["Chandipur","Rampur","Devgarh","Sitapur","Kishanpur","Baldev Nagar"];
+const CROPS=["Paddy","Wheat","Sugarcane","Vegetables","Cotton"];
+const WINS=["Next 24 hours","Next 48 hours","Next 5 days"];
+const hs=s=>{let h=2166136261;for(let i=0;i<s.length;i++){h^=s.charCodeAt(i);h=Math.imul(h,16777619)}return()=>{h=Math.imul(h^h>>>15,2246822519);h^=h>>>13;return(h>>>0)/4294967296}};
+let state={pan:PANS[0],crop:CROPS[0],win:WINS[0]};
+function mkOpt(id,arr,key){const el=$(id);el.innerHTML=arr.map(v=>`<button data-v="${v}">${v}</button>`).join("");
+[...el.children].forEach(b=>{b.classList.toggle("on",b.dataset.v===state[key]);b.onclick=()=>{state[key]=b.dataset.v;[...el.children].forEach(x=>x.classList.toggle("on",x===b));render()}})}
+mkOpt("#oPan",PANS,"pan");mkOpt("#oCrop",CROPS,"crop");mkOpt("#oWin",WINS,"win");
+function seedFor(pan,win,dayOff){const q=hs(pan+win+dayOff);const rain=Math.max(2,6+q()*60*(dayOff==0?1:dayOff==1?.8:.55));
+return{rain,temp:26+q()*9,wind:6+q()*14,hum:48+rain*.5+q()*10}}
+const lvl=r=>r<10?["Low",0,"#7d9c8f"]:r<25?["Mild",1,"#C8B26A"]:r<50?["Moderate",2,"#C8754D"]:["High",3,"#8a3a1f"];
+const RECO=[
+"Skies stay open — a good window for irrigation and routine field operations.",
+"Light showers are likely. Reduce irrigation volume and keep an eye on soil moisture.",
+"Consider delaying irrigation and spraying until the rainfall window passes.",
+"Postpone spraying and harvest. Clear drainage channels and protect stored produce."];
+function cropNote(crop,L){
+if(crop=="Paddy")return L>=2?"Standing water risk in low bunds — check field drainage.":"Rain supports transplanting and nursery growth this week.";
+if(crop=="Wheat")return L>=2?"Delay top-dressing of fertiliser until fields drain.":"Suitable window for irrigation scheduling.";
+if(crop=="Sugarcane")return L>=2?"Watch for waterlogging near ratoon rows.":"Rain aids cane elongation; monitor for lodging in wind.";
+if(crop=="Vegetables")return L>=2?"Cover nursery beds; delay transplanting.":"Good conditions for spraying and staking.";
+return L>=2?"Delay defoliant and pesticide spray until rain clears.":"Suitable window for spraying and field scouting.";}
+function windowDays(win){return win=="Next 5 days"?[0,1,2]:win=="Next 48 hours"?[0,1]:[0]}
+function render(){
+const d0=seedFor(state.pan,state.win,0),L=lvl(d0.rain);
+$("#nPlace").textContent=state.pan;$("#nWin").textContent=state.win.toUpperCase()+" · "+state.crop.toUpperCase();
+$("#nRain").textContent=Math.round(d0.rain);$("#nTemp").innerHTML=d0.temp.toFixed(1)+"<small style='font-size:20px;color:var(--m);font-family:Inter'>°C</small>";
+$("#nDot").style.background=L[2];$("#nRisk").textContent=L[0]+" rainfall risk";$("#nRisk").style.color=L[2];
+$("#nReco").textContent=RECO[L[1]]+" "+cropNote(state.crop,L[1]);
+$("#chain").innerHTML=`<span><b>Forecast</b> ${Math.round(d0.rain)} mm, ${d0.temp.toFixed(1)}°C</span><i>+</i><span><b>Soil / weather context</b> ${d0.hum.toFixed(0)}% humidity, ${d0.wind.toFixed(0)} km/h wind</span><i>+</i><span><b>Local conditions</b> ${state.crop.toLowerCase()} field stage</span><i>+</i><span><b>Historical pattern</b> typical wet spell for this season</span><i>→</i><span style="color:var(--t)"><b>Advisory</b> ${L[0].toLowerCase()} risk guidance</span>`;
+const names=["Today","Tomorrow","Day 3"];
+$("#days").innerHTML=windowDays(state.win).map(i=>{const d=seedFor(state.pan,state.win,i),l=lvl(d.rain);
+return `<div class="day"><div class="dn se">${names[i]}</div><div class="dv">
+<div><span class="mt">Rainfall</span><span>${Math.round(d.rain)} mm</span></div>
+<div><span class="mt">Temperature</span><span>${d.temp.toFixed(1)}°C</span></div>
+<div><span class="mt">Wind</span><span>${Math.round(d.wind)} km/h</span></div>
+<div><span class="mt">Risk</span><span style="color:${l[2]}">${l[0]}</span></div>
+</div></div>`}).join("");
+const IR=L[1]>=2?"WAIT":L[1]==1?"MONITOR":"PROCEED";
+const SP=L[1]>=2?"WAIT":L[1]==1?"PLAN":"PROCEED";
+const FO=L[1]>=3?"WAIT":L[1]==2?"PLAN":"PROCEED";
+const CP=L[1]>=2?"PLAN":"MONITOR";
+const G=[["Irrigation",IR,IR=="WAIT"?"Hold irrigation until rainfall clears the field.":IR=="MONITOR"?"Light rain may cover part of crop water need — check soil before scheduling.":"No rain constraint — irrigate on the usual schedule."],
+["Spraying",SP,SP=="WAIT"?"Rain will wash off any spray applied now — hold until skies clear.":SP=="PLAN"?"Plan spraying for a drier slot later in the window.":"Conditions are dry enough to spray as planned."],
+["Field operations",FO,FO=="WAIT"?"Avoid heavy machinery on wet or waterlogged fields.":FO=="PLAN"?"Sequence field work around the expected rain window.":"Fields are workable for routine operations."],
+["Crop protection",CP,CP=="PLAN"?"Watch for pest/disease pressure that follows wet, humid spells.":"Conditions are stable — routine monitoring is enough."]];
+$("#grid4").innerHTML=G.map(g=>`<div class="gc"><div><h3 class="se">${g[0]}</h3><p>${g[2]}</p></div><div class="stat st-${g[1]}"><i></i>${g[1]}</div></div>`).join("");
+}
+$("#whyBtn").onclick=()=>{$("#whyBox").classList.toggle("on");$("#whyBtn").textContent=$("#whyBox").classList.contains("on")?"Why this advisory? −":"Why this advisory? ＋"};
+render();
+</script><script src="assets/fx.js"></script></body></html>
